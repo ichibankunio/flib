@@ -7,6 +7,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/ichibankunio/flib/storage"
 )
 
 type Game struct {
@@ -17,8 +18,10 @@ type Game struct {
 	Counter int
 
 	Scenes []Scene
+	
 	State  SceneID
 	Lang   LangID
+	Storage storage.Storage
 	// SettingState int
 
 	IsSceneTransition  bool
