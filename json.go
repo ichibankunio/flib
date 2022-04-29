@@ -19,6 +19,8 @@ type textJson struct {
 	color colorJson `json:"color"`
 }
 
+var TextAsset map[string][2]string
+
 type colorJson struct {
 	r uint32 `json:"r"`
 	g uint32 `json:"g"`
