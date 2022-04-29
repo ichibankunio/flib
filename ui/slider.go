@@ -36,9 +36,9 @@ func NewVolumeSlider(centerX, y int, width int, target SoundType, fontFace font.
 
 	switch target {
 	case SoundBGM:
-		s.handle.Spr.Pos.X = s.bar.Pos.X + flib.BGMVolume * float64(width - s.handle.Spr.Img.Bounds().Dx())
+		s.handle.Spr.Pos.X = s.bar.Pos.X + flib.GetBGMVolume() * float64(width - s.handle.Spr.Img.Bounds().Dx())
 	case SoundSE:
-		s.handle.Spr.Pos.X = s.bar.Pos.X + flib.SEVolume * float64(width - s.handle.Spr.Img.Bounds().Dx())
+		s.handle.Spr.Pos.X = s.bar.Pos.X + flib.GetSEVolume() * float64(width - s.handle.Spr.Img.Bounds().Dx())
 	}
 
 	s.handle.txt.SetCenter(int(s.handle.Spr.Pos.X) + s.handle.Spr.Img.Bounds().Dx() / 2)
@@ -97,9 +97,9 @@ func (s *Slider) Update(g *flib.Game) {
 		scale := (s.handle.Spr.Pos.X - s.bar.Pos.X) / float64(s.bar.Img.Bounds().Dx() - s.handle.Spr.Img.Bounds().Dx())
 		switch s.target {
 		case SoundBGM:
-			flib.BGMVolume = scale
+			flib.SetBGMVolume(scale)
 		case SoundSE:
-			flib.SEVolume = scale
+			flib.SetSEVolume(scale)
 		}
 		// println(scale)
 	}

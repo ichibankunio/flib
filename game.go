@@ -22,7 +22,6 @@ type Game struct {
 	State  SceneID
 	Lang   LangID
 	Storage storage.Storage
-	// SettingState int
 
 	IsSceneTransition  bool
 	transitionTick     *TickF
@@ -36,26 +35,19 @@ const (
 	LANG_EN
 )
 
-var JustPressedTouchIDs []ebiten.TouchID
-var TouchIDs []ebiten.TouchID
-var JustReleasedTouchIDs []ebiten.TouchID
-var BGMVolume float64 = 1.0
-var SEVolume float64 = 1.0
-var DebugInt int
-
 type SceneID int
 
 func (g *Game) Update() error {
-	JustReleasedTouchIDs = JustReleasedTouchIDs[:0]
-	for _, id := range TouchIDs {
+	justReleasedTouchIDs = justReleasedTouchIDs[:0]
+	for _, id := range touchIDs {
 		if inpututil.IsTouchJustReleased(id) {
-			JustReleasedTouchIDs = append(JustReleasedTouchIDs, id)
+			justReleasedTouchIDs = append(justReleasedTouchIDs, id)
 		}
 	}
 
-	JustPressedTouchIDs = inpututil.AppendJustPressedTouchIDs(JustPressedTouchIDs[:0])
+	justPressedTouchIDs = inpututil.AppendJustPressedTouchIDs(justPressedTouchIDs[:0])
 	// touchIDs = inpututil.AppendJustPressedTouchIDs(touchIDs[:0])
-	TouchIDs = ebiten.AppendTouchIDs(TouchIDs[:0])
+	touchIDs = ebiten.AppendTouchIDs(touchIDs[:0])
 
 	g.thisFrameTime = time.Now().Nanosecond()
 
