@@ -23,6 +23,9 @@ type Sprite struct {
 	TouchID            ebiten.TouchID
 	lastFrameTouchX    int
 	lastFrameTouchY    int
+
+	isJustReleased bool
+	isStillTouched bool
 }
 
 func NewSprite(img *ebiten.Image, pos *Vec2) *Sprite {
@@ -41,7 +44,7 @@ func NewSprite(img *ebiten.Image, pos *Vec2) *Sprite {
 }
 
 func (s *Sprite) SetCenter(center int) {
-	s.Pos.X = float64(center-s.Img.Bounds().Dx()/2)
+	s.Pos.X = float64(center - s.Img.Bounds().Dx()/2)
 }
 
 func (s *Sprite) Draw(screen *ebiten.Image) {
@@ -76,18 +79,59 @@ func (s *Sprite) IsJustTouched() bool {
 	return false
 }
 
+func (s *Sprite) checkIsTouchJustReleased() {
+	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
+		x, y := ebiten.CursorPosition()
+
+		if x >= int(s.Pos.X) && x <= int(s.Pos.X)+s.Img.Bounds().Dx() && y >= int(s.Pos.Y) && y <= int(s.Pos.Y)+s.Img.Bounds().Dy() {
+			s.isStillTouched = true
+			s.isJustReleased = true
+			return
+		}
+		
+		s.isJustReleased = true
+		s.isStillTouched = false
+		return
+	}
+
+	// if s.JustPressedTouchID != 5000 {
+	if inpututil.IsTouchJustReleased(s.JustPressedTouchID) {
+		s.JustPressedTouchID = 5000
+
+		x, y := s.lastFrameTouchX, s.lastFrameTouchY
+		if x >= int(s.Pos.X) && x <= int(s.Pos.X)+s.Img.Bounds().Dx() && y >= int(s.Pos.Y) && y <= int(s.Pos.Y)+s.Img.Bounds().Dy() {
+			s.isStillTouched = true
+			s.isJustReleased = true
+			return
+		}
+
+		s.isJustReleased = true
+		s.isStillTouched = false
+		return
+	}
+
+	s.isJustReleased = false
+	s.isStillTouched = false
+	return
+}
+
 func (s *Sprite) IsTouchJustReleased() (isJustReleased bool, isStillTouched bool) {
+	/*
 	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
 
 		if x >= int(s.Pos.X) && x <= int(s.Pos.X)+s.Img.Bounds().Dx() && y >= int(s.Pos.Y) && y <= int(s.Pos.Y)+s.Img.Bounds().Dy() {
 			return true, true
 		}
+		
 		return true, false
 
 	}
 
+	// if s.JustPressedTouchID != 5000 {
 	if inpututil.IsTouchJustReleased(s.JustPressedTouchID) {
+		s.JustPressedTouchID = 5000
+
 		x, y := s.lastFrameTouchX, s.lastFrameTouchY
 		if x >= int(s.Pos.X) && x <= int(s.Pos.X)+s.Img.Bounds().Dx() && y >= int(s.Pos.Y) && y <= int(s.Pos.Y)+s.Img.Bounds().Dy() {
 			return true, true
@@ -97,6 +141,9 @@ func (s *Sprite) IsTouchJustReleased() (isJustReleased bool, isStillTouched bool
 	}
 
 	return false, false
+	*/
+
+	return s.isJustReleased, s.isStillTouched
 }
 
 func (s *Sprite) IsTouched() bool {
@@ -119,17 +166,18 @@ func (s *Sprite) IsTouched() bool {
 }
 
 func (s *Sprite) Update() {
-	if len(touchIDs) > 0 {
+	if len(touchIDs) > 0 && s.TouchID == 5000 {
 		for _, t := range touchIDs {
 			x, y := ebiten.TouchPosition(t)
 			if x >= int(s.Pos.X) && x <= int(s.Pos.X)+s.Img.Bounds().Dx() && y >= int(s.Pos.Y) && y <= int(s.Pos.Y)+s.Img.Bounds().Dy() {
 				s.TouchID = t
 				// break
-
-			} else {
-				s.TouchID = 5000
 			}
 		}
+	}
+
+	if s.TouchID != 5000 && inpututil.IsTouchJustReleased(s.TouchID) {
+		s.TouchID = 5000
 	}
 
 	if len(justPressedTouchIDs) > 0 {
@@ -138,14 +186,19 @@ func (s *Sprite) Update() {
 			if x >= int(s.Pos.X) && x <= int(s.Pos.X)+s.Img.Bounds().Dx() && y >= int(s.Pos.Y) && y <= int(s.Pos.Y)+s.Img.Bounds().Dy() {
 				s.JustPressedTouchID = t
 				// break
-			} else {
-				s.JustPressedTouchID = 5000
-			}
+			} 
+			// else {
+			// 	s.JustPressedTouchID = 5000
+			// }
 		}
+	}
+
+	if s.JustPressedTouchID != 5000 && inpututil.IsTouchJustReleased(s.JustPressedTouchID) {
 	}
 
 	if !inpututil.IsTouchJustReleased(s.JustPressedTouchID) {
 		s.lastFrameTouchX, s.lastFrameTouchY = ebiten.TouchPosition(s.JustPressedTouchID)
 	}
 
+	s.checkIsTouchJustReleased()
 }

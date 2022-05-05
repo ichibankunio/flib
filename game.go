@@ -95,6 +95,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func (g *Game) AddScene(scene interface{}) {
-	scene.(Scene).Init()
+	scene.(Scene).Init(g)
 	g.Scenes = append(g.Scenes, scene.(Scene))
 }

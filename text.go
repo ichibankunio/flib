@@ -29,10 +29,10 @@ type Text struct {
 	DrawOption func(*ebiten.DrawImageOptions)
 }
 
-func NewText(txt string, pos Vec2, clr color.Color, font font.Face) *Text {
+func NewText(txt string, pos *Vec2, clr color.Color, font font.Face) *Text {
 	return &Text{
 		Txt: txt,
-		Pos: pos,
+		Pos: *pos,
 		Clr: clr,
 		Hidden: false,
 		Alpha: 1,

@@ -12,7 +12,7 @@ type Scene interface {
 	Start()
 	GetID() SceneID
 	GetStatus() int
-	Init()
+	Init(*Game)
 }
 
 /*
