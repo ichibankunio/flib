@@ -9,6 +9,17 @@ type Vec2 struct {
 	X, Y float64
 }
 
+type Vec2i struct {
+	X, Y int
+}
+
+func NewVeci(x, y int) *Vec2i {
+	return &Vec2i{
+		X: x,
+		Y: y,
+	}
+}
+
 func NewVec(x, y float64) *Vec2 {
 	return &Vec2{
 		X: x,
@@ -23,7 +34,20 @@ func (v Vec2) Clone() *Vec2 {
 	} 
 }
 
+func (v Vec2i) Clone() *Vec2i {
+	return &Vec2i{
+		X: v.X,
+		Y: v.Y,
+	} 
+}
+
 func (v *Vec2) Add(other *Vec2) *Vec2 {
+	v.X += other.X
+	v.Y += other.Y
+	return v
+}
+
+func (v *Vec2i) Add(other *Vec2i) *Vec2i {
 	v.X += other.X
 	v.Y += other.Y
 	return v
