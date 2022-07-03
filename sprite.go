@@ -3,14 +3,15 @@ package flib
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/ichibankunio/flib/vec2"
 )
 
 type Sprite struct {
 	Img *ebiten.Image
-	Pos Vec2
+	Pos vec2.Vec2
 	// X float64
 	// Y float64
-	V Vec2
+	V vec2.Vec2
 
 	// Vx float64
 	// Vy float64
@@ -28,10 +29,10 @@ type Sprite struct {
 	isStillTouched bool
 }
 
-func NewSprite(img *ebiten.Image, pos *Vec2) *Sprite {
+func NewSprite(img *ebiten.Image, pos vec2.Vec2) *Sprite {
 	spr := &Sprite{
 		Img: img,
-		Pos: *pos,
+		Pos: pos,
 		// X:     x,
 		// Y:     y,
 		Alpha:              1,

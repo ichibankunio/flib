@@ -71,7 +71,6 @@ func (tr *TiledRenderer) Init(x, y float64, source *ebiten.Image, tileNumX, tile
 
 func (tr *TiledRenderer) GetTileCoordAtPos(pos *flib.Vec2) *flib.Vec2i {
 	return flib.NewVeci(int((pos.X+float64(tr.Map.TileSize)*1.5) / float64(tr.Map.TileSize)), int((pos.Y + tr.Camera.Pos.Y+float64(tr.Map.TileSize)*1.5) / float64(tr.Map.TileSize)))
-	// return flib.NewVeci(int((pos.X + tr.Camera.Pos.X+float64(tr.Map.TileSize)*1.5) / float64(tr.Map.TileSize)), int((pos.Y + tr.Camera.Pos.Y+float64(tr.Map.TileSize)*1.5) / float64(tr.Map.TileSize)))
 }
 
 func (tr *TiledRenderer) GetPosAtTileCoord(tileCoord *flib.Vec2i) *flib.Vec2 {
@@ -80,12 +79,10 @@ func (tr *TiledRenderer) GetPosAtTileCoord(tileCoord *flib.Vec2i) *flib.Vec2 {
 
 func (tr *TiledRenderer) GetPosXAtTileCoordX(tileCoordX int) float64 {
 	return float64(tileCoordX*tr.Map.TileSize)-float64(tr.Map.TileSize)*1.5
-	// return float64(tileCoordX*tr.Map.TileSize)-tr.Camera.Pos.X-float64(tr.Map.TileSize)*1.5
 }
 
 func (tr *TiledRenderer) GetPosYAtTileCoordY(tileCoordY int) float64 {
 	return float64(tileCoordY*tr.Map.TileSize)-float64(tr.Map.TileSize)*1.5
-	// return float64(tileCoordY*tr.Map.TileSize)-tr.Camera.Pos.Y-float64(tr.Map.TileSize)*1.5
 }
 
 func (tr *TiledRenderer) GetTileIDAtTileCoord(tileCoord *flib.Vec2i) int {
@@ -137,11 +134,6 @@ func (tr *TiledRenderer) CheckCollision() {
 					tr.Player.Rect.Pos.X = tr.GetPosXAtTileCoordX(dstTileCoord.X - 1)
 					// println(tr.GetPosXAtTileCoordX(dstTileCoord.X - 1))
 					fmt.Printf("RIGHT:HIT(%d,%d)\n", dstTileCoord.X, dstTileCoord.Y+i)
-					// tr.Player.V.X = 0
-					// if tr.Player.V.Y <= 0 {//上昇中なら上昇をストップ
-					// 	tr.Player.V.Y = 0
-					// 	// tr.Player.Rect.Pos.Y = tr.GetPosYAtTileCoordY(dstTileCoord.Y+i)
-					// }
 					break
 				}
 				// if int(tr.Player.Rect.Pos.Y)%tr.Map.TileSize == tr.Map.TileSize/2 {
@@ -160,13 +152,6 @@ func (tr *TiledRenderer) CheckCollision() {
 				if tr.GetTileIDAtTileCoord(dstTileCoord.Clone().Add(flib.NewVeci(0, i))) != 0 {
 					tr.Player.Rect.Pos.X = tr.GetPosXAtTileCoordX(dstTileCoord.X) + float64(tr.Map.TileSize)
 					fmt.Printf("LEFT:HIT(%d,%d)\n", dstTileCoord.X, dstTileCoord.Y+i)
-					// tr.Player.V.X = 0
-
-					// if tr.Player.V.Y <= 0 {//上昇中なら上昇をストップ
-					// 	tr.Player.V.Y = 0
-					// 	// tr.Player.Rect.Pos.Y = tr.GetPosYAtTileCoordY(dstTileCoord.Y+i)
-
-					// }
 					break
 				}
 				if (int(tr.Player.Rect.Pos.Y)+tr.Map.TileSize/2)%tr.Map.TileSize == 0 {
@@ -208,11 +193,11 @@ func (tr *TiledRenderer) CheckCollision() {
 
 				break
 			}
-			println((int(tr.Player.Rect.Pos.X)+tr.Map.TileSize/2))
+			// println((int(tr.Player.Rect.Pos.X)+tr.Map.TileSize/2))
 
 			if (int(tr.Player.Rect.Pos.X)+tr.Map.TileSize/2)%tr.Map.TileSize == 0 {
 
-				println("break")
+				// println("break")
 				break
 			}
 		}

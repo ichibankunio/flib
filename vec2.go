@@ -24,21 +24,21 @@ func NewVec(x, y float64) *Vec2 {
 	return &Vec2{
 		X: x,
 		Y: y,
-	} 
+	}
 }
 
 func (v Vec2) Clone() *Vec2 {
 	return &Vec2{
 		X: v.X,
 		Y: v.Y,
-	} 
+	}
 }
 
 func (v Vec2i) Clone() *Vec2i {
 	return &Vec2i{
 		X: v.X,
 		Y: v.Y,
-	} 
+	}
 }
 
 func (v *Vec2) Add(other *Vec2) *Vec2 {
@@ -71,7 +71,6 @@ func (v *Vec2) SubScalar(scalar float64) *Vec2 {
 	return v
 }
 
-
 func (v *Vec2) Normalize() *Vec2 {
 	len := v.Length()
 	if len != 0 {
@@ -83,6 +82,10 @@ func (v *Vec2) Normalize() *Vec2 {
 
 func (v *Vec2) Length() float64 {
 	return math.Sqrt(v.X*v.X + v.Y*v.Y)
+}
+
+func (v *Vec2) SquaredLength() float64 {
+	return v.X*v.X + v.Y*v.Y
 }
 
 func (v *Vec2) Scale(s float64) *Vec2 {
@@ -98,7 +101,6 @@ func VecFromAngle(angle, magnitude float64) *Vec2 {
 	}
 }
 
-
 func (v *Vec2) Equals(other *Vec2) bool {
 	return v.X == other.X && v.Y == other.Y
 }
@@ -110,3 +112,6 @@ func RandomDirection() *Vec2 {
 	}).Normalize()
 }
 
+func (v *Vec2) Heading() float64 {
+	return math.Atan2(v.X, v.Y)
+}
