@@ -5,6 +5,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/ichibankunio/flib"
+	"github.com/ichibankunio/flib/vec2"
 	"golang.org/x/image/font"
 )
 
@@ -31,7 +32,7 @@ func NewVolumeSlider(centerX, y int, width int, target SoundType, fontFace font.
 	s := &Slider{
 		target: target,
 		handle: NewButton(label, centerX + width / 2 - width / 8, y - width / 16 - width/32 , width/4, width/4, fontFace, ThemeRound, txtClr, clrBound, clrBg),
-		bar: flib.NewSprite(NewButtonImg(width, width/16, ThemeRound, clrBound, clrBg), flib.NewVec(float64(centerX - width / 2), float64(y))),
+		bar: flib.NewSprite(NewButtonImg(width, width/16, ThemeRound, clrBound, clrBg), vec2.New(float64(centerX - width / 2), float64(y))),
 	}
 
 	switch target {

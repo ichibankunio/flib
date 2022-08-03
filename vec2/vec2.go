@@ -40,3 +40,20 @@ func (v Vec2) Clone() Vec2 {
 		Y: v.Y,
 	}
 }
+
+func NewArray(arr [][2]float64) []Vec2 {
+	out := make([]Vec2, len(arr))
+	for i, _ := range arr {
+		out[i] = New(arr[i][0], arr[i][1])
+	}
+
+	return out
+}
+
+func (v Vec2) Heading() float64 {
+	return math.Atan2(v.X, v.Y)
+}
+
+func (v Vec2) Scale(s float64) Vec2 {
+	return New(v.X*s, v.Y*s)
+}

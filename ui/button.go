@@ -5,10 +5,11 @@ import (
 	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	
+
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/ichibankunio/flib"
+	"github.com/ichibankunio/flib/vec2"
 	"golang.org/x/image/font"
 )
 
@@ -36,8 +37,8 @@ type Button struct {
 
 func NewButton(txt string, centerX int, y int, width int, height int, fontface font.Face, theme UITheme, txtClr, clrBound, clrBg color.Color) *Button {
 	return &Button{
-		Spr: flib.NewSprite(NewButtonImg(width, height, theme, clrBound, clrBg), flib.NewVec(float64(centerX - width / 2), float64(y))),
-		Txt: flib.NewText(txt, flib.NewVec(float64(centerX - text.BoundString(fontface, txt).Dx()/2), float64(y + height / 2 - text.BoundString(fontface, txt).Dy()/2)), txtClr, fontface),
+		Spr: flib.NewSprite(NewButtonImg(width, height, theme, clrBound, clrBg), vec2.New(float64(centerX - width / 2), float64(y))),
+		Txt: flib.NewText(txt, vec2.New(float64(centerX - text.BoundString(fontface, txt).Dx()/2), float64(y + height / 2 - text.BoundString(fontface, txt).Dy()/2)), txtClr, fontface),
 		OnClick: func(*flib.Game){},
 		OnRelease: func(*flib.Game){},
 		IsClickInProgress: false,
@@ -45,7 +46,7 @@ func NewButton(txt string, centerX int, y int, width int, height int, fontface f
 }
 
 func (b *Button) Translate(x, y float64) {
-	b.Spr.Pos = *flib.NewVec(x, y)
+	b.Spr.Pos = vec2.New(x, y)
 
 	b.Txt.SetCenter(int(x) + b.Spr.Img.Bounds().Dx() / 2)
 }
