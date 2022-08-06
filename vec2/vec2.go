@@ -57,3 +57,7 @@ func (v Vec2) Heading() float64 {
 func (v Vec2) Scale(s float64) Vec2 {
 	return New(v.X*s, v.Y*s)
 }
+
+func (v Vec2) Mul(other Vec2) Vec2 {
+	return New(v.X * other.X, v.Y * other.Y)
+}
