@@ -5,7 +5,7 @@ import (
 	"math"
 
 	_"embed"
-	
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/ichibankunio/flib/vec2"
@@ -48,6 +48,10 @@ func (r *Renderer) Init(screenWidth, screenHeight float64, wallTexture, floorTex
 	if err != nil {
 		panic(err)
 	}
+
+	r.wallTexture = wallTexture
+	r.floorTexture = floorTexture
+	r.spriteTexture = spriteTexture
 }
 
 func (r *Renderer) GetScreenWidth() float64 {
