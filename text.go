@@ -72,7 +72,6 @@ func (t *Text) Draw(screen *ebiten.Image) {
 		op.ColorM.Scale(1, 1, 1, t.Alpha)
 
 		text.DrawWithOptions(screen, t.Txt, t.Font, op)
-
 	}
 }
 

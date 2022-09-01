@@ -1,0 +1,258 @@
+//go:build ignore
+// +build ignore
+
+package main
+
+var ScreenSize vec2
+var Pos vec2
+var Dir vec2
+var Plane vec2
+var TexSize float
+var WorldSize vec2
+var Level [100]float
+var FloorLevel [100]float
+var SpriteParam [5]float
+
+// Map is generated from my own c++ code...
+func GetWallMap(x int, y int) float {
+    return Level[10*y+x]
+}
+
+func GetFloorMap(x int, y int) float {
+    return FloorLevel[10*y+x]
+}
+
+
+func Fragment(position vec4, texCoord vec2, color vec4) vec4 {
+
+    //transform sprite with the inverse camera matrix
+    // [ planeX   dirX ] -1                                       [ dirY      -dirX ]
+    // [               ]       =  1/(planeX*dirY-dirX*planeY) *   [                 ]
+    // [ planeY   dirY ]                                          [ -planeY  planeX ]
+
+
+	// if position.y > ScreenSize.y || position.y < ScreenSize.y/2 {
+	// 	return vec4(0, 0, 0, 0)
+	// }
+
+	// std := vec2(position.x / ScreenSize.x, (position.y/ScreenSize.y - 0.5)*2)
+    
+	// std := position.xy / ScreenSize.xy
+    // std.y = 1.0 - std.y
+
+    //calculate ray position and direction
+    cameraX := 2.0 * (1.0 - position.x / ScreenSize.x) - 1.0 //x-coordinate in camera space
+
+
+    rayDir := Dir + Plane * cameraX
+    // rayDir := vec2(Dir.x + Plane.x * cameraX, Dir.y + Plane.y * cameraX)
+
+    mapPos := floor(Pos + 0.0)
+
+    // sideDist := vec2(0)
+    deltaDist := abs(1.0/rayDir)
+    // deltaDist := vec2(abs(1/rayDir.x), abs(1/rayDir.y))
+    perpWallDist := 0.0
+
+    unit := sign(rayDir)
+    // unit := vec2(0)
+    // hit := 0
+    side := -1.0
+
+    sideDist := (unit * (mapPos - Pos) + (unit * 0.5) + 0.5) * deltaDist
+
+    //calculate step and initial sideDist
+    // https://www.shadertoy.com/view/4dX3zl
+    // if rayDir.x < 0 {
+    //     unit.x = -1
+    //     sideDist.x = (Pos.x - mapPos.x) * deltaDist.x
+    // } else {
+    //     unit.x = 1
+    //     sideDist.x = (mapPos.x + 1.0 - Pos.x) * deltaDist.x
+    // }
+
+    // if rayDir.y < 0 {
+    //     unit.y = -1
+    //     sideDist.y = (Pos.y - mapPos.y) * deltaDist.y
+    // } else {
+    //     unit.y = 1
+    //     sideDist.y = (mapPos.y + 1.0 - Pos.y) * deltaDist.y
+    // }
+
+    mapIndex := 0.0
+
+    //perform DDA
+    for i := 0; i < 20; i++ {
+        //jump to next map square, OR in x-direction, OR in y-direction
+        if sideDist.x < sideDist.y {
+            sideDist.x += deltaDist.x
+            mapPos.x += unit.x
+            side = 0.0
+        } else {
+            sideDist.y += deltaDist.y
+            mapPos.y += unit.y
+            side = 1.0
+        }
+
+        mapIndex = GetWallMap(int(mapPos.x), int(mapPos.y))
+        if mapIndex >= 1 {
+            // hit = 1
+            break
+        }
+
+        //Calculate distance of perpendicular ray (oblique distance will give fisheye effect!)
+    }
+
+    // if hit == 0 {
+    //     return vec4(0)
+    // }
+    
+
+    // wallX := 0.0
+    perpWallDist = side * (sideDist.y - deltaDist.y) + (1.0 - side) * (sideDist.x - deltaDist.x)
+    squaredEuclidean := perpWallDist * perpWallDist * (rayDir.x * rayDir.x + rayDir.y * rayDir.y) // eulidean = perpWallDist * |rayDir|
+
+    //sprite casting
+
+    if SpriteParam[0] >= 0 && SpriteParam[0] < squaredEuclidean && position.x > SpriteParam[1] && position.x < SpriteParam[1] + SpriteParam[3] && position.y > SpriteParam[2] && position.y < SpriteParam[2] + SpriteParam[4] {
+        // return vec4(0.5)
+        texPos := vec2((position.x - SpriteParam[1]) / SpriteParam[3], (position.y - SpriteParam[2]) / SpriteParam[4]) * TexSize
+        
+        texOrigin, _ := imageSrcRegionOnTexture()
+        //s はテクスチャ上のimageSrc上の座標　単位テクセル
+        //texOrigin + s/imageSrcTextureSize()はimageSrcがあるテクスチャのどの座標（単位ピクセル）のRGBAをとるか
+        clr := imageSrc2UnsafeAt(texOrigin + texPos/imageSrcTextureSize())
+        if clr.a > 0 {
+            return clr
+        }
+    }
+
+    wallX := fract(side * (Pos.x + perpWallDist*rayDir.x) + (1.0 - side) * (Pos.y + perpWallDist*rayDir.y))
+    // if side == 0 {
+    //     perpWallDist = sideDist.x - deltaDist.x
+    //     wallX = Pos.y + perpWallDist*rayDir.y //rayposY + perpwallDist * sin(angle)みたいなイメージ
+    // } else {
+    //     perpWallDist = sideDist.y - deltaDist.y
+    //     wallX = Pos.x + perpWallDist*rayDir.x //rayposX + perpwallDist * cos(angle)みたいなイメージ
+    // }
+
+    // wallX = fract(wallX) //整数部分をひく
+    // wallX -= floor(wallX)
+
+    // r.texX = int(wallX * float64(s.wld.texSize))
+
+    lineHeight := ScreenSize.y / perpWallDist
+
+
+    drawStart := -lineHeight / 2.0 + ScreenSize.y / 2.0
+    drawEnd := lineHeight / 2.0 + ScreenSize.y / 2.0
+
+    // brightnessLevel := 1/(1+perpWallDist/5)
+
+
+    if position.y >= drawStart && position.y <= drawEnd {
+        texPos := vec2((wallX + mod(mapIndex-1, ScreenSize.x / TexSize)) * TexSize, (position.y - drawStart) / lineHeight * TexSize)
+        // texX := int(wallX * TexSize)
+        // texY := int((position.y - drawStart) / lineHeight * TexSize)
+        texOrigin, _ := imageSrcRegionOnTexture()
+        //s はテクスチャ上のimageSrc上の座標　単位テクセル
+        //texOrigin + s/imageSrcTextureSize()はimageSrcがあるテクスチャのどの座標（単位ピクセル）のRGBAをとるか
+        clr := imageSrc0At(texOrigin + texPos/imageSrcTextureSize()).rgb
+        // if clr == vec4(1, 0, 0, 1) {
+        //     return vec4(0, 1, 0, 1)
+        // }
+        // return clr
+
+        // return side * (clr/2.) + (1. - side) * clr
+
+        // return side * vec4(clr/vec3(perpWallDist)-vec3(0.2), 1) + (1. - side) * vec4(clr/vec3(perpWallDist), 1)
+        return side * vec4(clr-vec3(0.2), 1) + (1.0 - side) * vec4(clr, 1.0)
+        // return side * vec4(clr*0.5, 1) + (1. - side) * vec4(clr, 1)
+        // if side == 1 {
+        //     return clr-vec4(0.2)
+        // }else {
+        //     return clr
+        // }
+    }else if position.y > drawEnd {
+
+        // rayHitPos := vec2(0, 0)
+
+        rayHitPos := vec2(mapPos.x + side * wallX + (1.0 - side) * (0.5 - 0.5 * sign(rayDir.x)), mapPos.y + (1.0-side) * wallX + side*((0.5 - 0.5 * sign(rayDir.y))))
+        // rayHitPos := vec2(mapPos.x + mix(1-step(rayDir.x, 0.0), wallX, side), mapPos.y + mix(wallX, 1 - step(rayDir.y, 0.0), side))
+
+/*
+    if side == 0 && rayDir.x > 0 { // rayが壁の左にヒット
+        rayHitPos.x = mapPos.x
+        rayHitPos.y = mapPos.y + wallX
+    } else if side == 0 && rayDir.x < 0 { // rayが壁の右にヒット
+        rayHitPos.x = mapPos.x + 1.0
+        rayHitPos.y = mapPos.y + wallX
+    } else if side == 1 && rayDir.y > 0 { //rayが壁の上にヒット
+        rayHitPos.x = mapPos.x + wallX
+        rayHitPos.y = mapPos.y
+    } else if side == 1 && rayDir.y < 0 { // rayが壁の下にヒット
+        rayHitPos.x = mapPos.x + wallX
+        rayHitPos.y = mapPos.y + 1.0
+    }
+*/
+
+        distToIntersectionWithBottomOfWall := perpWallDist
+        distPlayer := 0.0
+        // println(int(r.renderPos.Y+r.lineHeight) + 1)
+        distToIntersectionWithFloor := ScreenSize.y / (2.0*position.y - ScreenSize.y) //この代わりに小さなルックアップ テーブルを作成できます
+        weight := (distToIntersectionWithFloor - distPlayer) / (distToIntersectionWithBottomOfWall - distPlayer)//0-1
+
+        currentFloor := vec2(weight*rayHitPos.x+(1.0-weight)*Pos.x, weight*rayHitPos.y+(1.0-weight)*Pos.y) //平面図において線形補完
+        floorMapIndex := GetFloorMap(int(currentFloor.x), int(currentFloor.y)) - 1.0
+        // texPos := vec2((fract(currentFloor.x)) * TexSize, (fract(currentFloor.y)) * TexSize)
+        if (fract(currentFloor.x)) <= 0.003 {
+            currentFloor.x += 0.003
+        }
+        texPos := vec2((fract(currentFloor.x) + mod(floorMapIndex, ScreenSize.x / TexSize)) * TexSize, (fract(currentFloor.y)) * TexSize)
+        // texPos := (fract(currentFloor) + floorMapIndex) * TexSize
+
+
+        
+
+        // texPos := currentFloor / WorldSize * TexSize
+        
+        // if texPos.x > 0.5 {
+        //     return vec4(0, 1, 0, 1)
+        // }
+
+        texOrigin, _ := imageSrcRegionOnTexture()
+        //s はテクスチャ上のimageSrc上の座標　単位テクセル
+        //texOrigin + s/imageSrcTextureSize()はimageSrcがあるテクスチャのどの座標（単位ピクセル）のRGBAをとるか
+        return imageSrc1UnsafeAt(texOrigin + texPos/imageSrcTextureSize())
+    }else if position.y < drawStart {
+        rayHitPos := vec2(mapPos.x + side * wallX + (1.0 - side) * (0.5 - 0.5 * sign(rayDir.x)), mapPos.y + (1.0-side) * wallX + side*((0.5 - 0.5 * sign(rayDir.y))))
+
+        distToIntersectionWithTopOfWall := perpWallDist
+        distPlayer := 0.0
+        // println(int(r.renderPos.Y+r.lineHeight) + 1)
+        distToIntersectionWithCeiling := ScreenSize.y / (2.0*position.y - ScreenSize.y) //この代わりに小さなルックアップ テーブルを作成できます
+        weight := -(distToIntersectionWithCeiling - distPlayer) / (distToIntersectionWithTopOfWall - distPlayer)//0-1
+
+        currentCeiling := vec2(weight*rayHitPos.x+(1.0-weight)*Pos.x, weight*rayHitPos.y+(1.0-weight)*Pos.y) //平面図において線形補完
+
+        texPos := fract(currentCeiling) * TexSize
+
+        // texPos := currentFloor / WorldSize * TexSize
+        
+        // if texPos.x > 0.5 {
+        //     return vec4(0, 1, 0, 1)
+        // }
+
+        texOrigin, _ := imageSrcRegionOnTexture()
+        //s はテクスチャ上のimageSrc上の座標　単位テクセル
+        //texOrigin + s/imageSrcTextureSize()はimageSrcがあるテクスチャのどの座標（単位ピクセル）のRGBAをとるか
+        return imageSrc0UnsafeAt(texOrigin + texPos/imageSrcTextureSize()) - vec4(0.2, 0.2, 0.2, 0)
+
+    }
+    
+
+    return vec4(0.0)
+
+}
+
+
