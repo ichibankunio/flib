@@ -27,10 +27,11 @@ type Renderer struct {
 	floorTexture *ebiten.Image
 	spriteTexture *ebiten.Image
 	wallTexture *ebiten.Image
+	texSize int
 	
 }
 
-func (r *Renderer) Init(screenWidth, screenHeight float64, wallTexture, floorTexture, spriteTexture *ebiten.Image) {
+func (r *Renderer) Init(screenWidth, screenHeight float64, wallTextures []*ebiten.Image, floorTextures []*ebiten.Image, spriteTexture *ebiten.Image, texSize int) {
 	r.cam = &camera{}
 	r.cam.Init(screenWidth, screenHeight)
 
@@ -49,9 +50,23 @@ func (r *Renderer) Init(screenWidth, screenHeight float64, wallTexture, floorTex
 		panic(err)
 	}
 
-	r.wallTexture = wallTexture
-	r.floorTexture = floorTexture
+	r.floorTexture = ebiten.NewImage(int(r.screenWidth), int(r.screenHeight))
+	for i, t := range floorTextures {
+		op := &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(float64((i%(int(screenWidth)/texSize))*texSize), float64((i/(int(screenWidth)/texSize))*texSize))
+
+		r.floorTexture.DrawImage(t, op)
+	}
+
+	r.wallTexture = ebiten.NewImage(int(screenWidth), int(screenHeight))
+	for i, t := range wallTextures {
+		op := &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(float64((i%(int(screenWidth)/texSize))*texSize), float64((i/(int(screenHeight)/texSize))*texSize))
+		r.wallTexture.DrawImage(t, op)
+	}
+
 	r.spriteTexture = spriteTexture
+
 }
 
 func (r *Renderer) GetScreenWidth() float64 {
@@ -69,7 +84,7 @@ func (r *Renderer) Update() {
 }
 
 func (r *Renderer) Draw(screen *ebiten.Image) {
-	r.RenderWall(screen)
+	r.renderWall(screen)
 
 	r.wld.DrawTopView(screen)
 
@@ -83,7 +98,7 @@ func (r *Renderer) Draw(screen *ebiten.Image) {
 	r.stk.Draw(screen)
 }
 
-func (r *Renderer) RenderWall(screen *ebiten.Image) {
+func (r *Renderer) renderWall(screen *ebiten.Image) {
 
 	op := &ebiten.DrawRectShaderOptions{}
 	op.Uniforms = map[string]interface{}{
