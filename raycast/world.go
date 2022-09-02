@@ -35,64 +35,18 @@ func (w *World) Init(screenWidth, screenHeight float64) {
 	w.gridSize = 64
 	w.width = 10
 	w.height = 10
-	w.baseLightValue = 180
-	// w.level = [][]int{
-	// 	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-	// 	{1, 0, 0, 0, 1, 1, 0, 0, 0, 1},
-	// 	{1, 0, 0, 0, 0, 1, 0, 0, 0, 1},
-	// 	{1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	// 	{1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	// 	{1, 0, 0, 0, 0, 0, 0, 1, 1, 1},
-	// 	{1, 0, 0, 0, 0, 0, 0, 0, 1, 1},
-	// 	{1, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-	// 	{1, 1, 0, 0, 0, 0, 0, 0, 0, 1},
-	// 	{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+
+	// w.spritePos = []vec2.Vec2{
+	// 	{128, 128},
 	// }
 
-	// w.level = []float32{
-	// 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	// 	1, 0, 0, 0, 1, 1, 0, 0, 0, 1,
-	// 	1, 0, 0, 0, 0, 1, 0, 0, 0, 1,
-	// 	1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-	// 	1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-	// 	1, 0, 0, 0, 0, 0, 0, 1, 1, 1,
-	// 	1, 0, 0, 1, 1, 0, 0, 0, 1, 1,
-	// 	1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-	// 	1, 1, 0, 0, 0, 0, 0, 0, 0, 1,
-	// 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	// }
-	// w.level = []float32{
-	// 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	// 	1, 0, 0, 0, 1, 1, 1, 0, 0, 1,
-	// 	1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-	// 	1, 0, 0, 0, 0, 1, 1, 0, 0, 1,
-	// 	1, 1, 0, 0, 0, 0, 0, 1, 0, 1,
-	// 	1, 0, 0, 1, 0, 0, 0, 1, 0, 1,
-	// 	1, 0, 1, 1, 1, 1, 1, 1, 0, 1,
-	// 	1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-	// 	1, 2, 0, 0, 0, 0, 0, 0, 0, 1,
-	// 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-	// }
-
-	// w.floorLevel = []float32{
-	// 	2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	// 	2, 3, 3, 2, 2, 2, 2, 1, 1, 2,
-	// 	2, 3, 3, 3, 3, 2, 2, 1, 1, 2,
-	// 	2, 3, 3, 3, 3, 2, 2, 2, 2, 2,
-	// 	2, 3, 3, 3, 3, 2, 2, 2, 2, 2,
-	// 	2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	// 	2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	// 	2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	// 	2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	// 	2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-	// }
-	w.spritePos = []vec2.Vec2{
-		{128, 128},
+	w.spriteRenderParam = make([]float32, 60)
+	for i := range w.spriteRenderParam {
+		if i%6 == 0 {
+			w.spriteRenderParam[i] = -1
+		}
 	}
 
-	w.spriteRenderParam = make([]float32, 5)
-
-	// w.buffer = ebiten.NewImage(SCREEN_WIDTH, SCREEN_HEIGHT)
 	w.texSize = 64
 
 	// w.floorTexture = ebiten.NewImage(int(screenWidth), int(screenHeight))
@@ -125,6 +79,19 @@ func (w *World) Init(screenWidth, screenHeight float64) {
 	// op.GeoM.Translate(float64(images[IMG_WALL].Bounds().Dx()), 0)
 	// w.wallTexture.DrawImage(images[IMG_WALL], op)
 
+}
+
+func (w *World) NewSprite(pos vec2.Vec2, texID int) {
+	if len(w.spritePos) < 10 {
+		w.spritePos = append(w.spritePos, pos)
+		w.spriteRenderParam[6*(len(w.spritePos)-1)] = float32(texID)
+		w.spriteRenderParam[6*(len(w.spritePos)-1)+1] = 0
+		w.spriteRenderParam[6*(len(w.spritePos)-1)+2] = 0
+		w.spriteRenderParam[6*(len(w.spritePos)-1)+3] = 0
+		w.spriteRenderParam[6*(len(w.spritePos)-1)+4] = 0
+		w.spriteRenderParam[6*(len(w.spritePos)-1)+5] = 0
+		w.spriteRenderParam[6*(len(w.spritePos)-1)+6] = 0
+	}
 }
 
 func (w *World) NewTopView() {

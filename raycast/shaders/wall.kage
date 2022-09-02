@@ -11,7 +11,7 @@ var TexSize float
 var WorldSize vec2
 var Level [100]float
 var FloorLevel [100]float
-var SpriteParam [5]float
+var SpriteParam [60]float
 
 // Map is generated from my own c++ code...
 func GetWallMap(x int, y int) float {
@@ -114,6 +114,24 @@ func Fragment(position vec4, texCoord vec2, color vec4) vec4 {
 
     //sprite casting
 
+    for i := 0; i < len(SpriteParam) / 6; i++ {
+        if SpriteParam[0] < 0 {
+            break
+        }
+        
+        if SpriteParam[1] >= 0 && SpriteParam[1] < squaredEuclidean && position.x > SpriteParam[2] && position.x < SpriteParam[2] + SpriteParam[4] && position.y > SpriteParam[3] && position.y < SpriteParam[3] + SpriteParam[5] {
+            texPos := vec2((position.x - SpriteParam[1]) / SpriteParam[3], (position.y - SpriteParam[2]) / SpriteParam[4]) * TexSize
+        
+            texOrigin, _ := imageSrcRegionOnTexture()
+            //s はテクスチャ上のimageSrc上の座標　単位テクセル
+            //texOrigin + s/imageSrcTextureSize()はimageSrcがあるテクスチャのどの座標（単位ピクセル）のRGBAをとるか
+            clr := imageSrc2UnsafeAt(texOrigin + texPos/imageSrcTextureSize())
+            if clr.a > 0 {
+                return clr
+            }
+        }
+    }
+/*
     if SpriteParam[0] >= 0 && SpriteParam[0] < squaredEuclidean && position.x > SpriteParam[1] && position.x < SpriteParam[1] + SpriteParam[3] && position.y > SpriteParam[2] && position.y < SpriteParam[2] + SpriteParam[4] {
         // return vec4(0.5)
         texPos := vec2((position.x - SpriteParam[1]) / SpriteParam[3], (position.y - SpriteParam[2]) / SpriteParam[4]) * TexSize
@@ -126,6 +144,7 @@ func Fragment(position vec4, texCoord vec2, color vec4) vec4 {
             return clr
         }
     }
+*/
 
     wallX := fract(side * (Pos.x + perpWallDist*rayDir.x) + (1.0 - side) * (Pos.y + perpWallDist*rayDir.y))
     // if side == 0 {
@@ -208,7 +227,9 @@ func Fragment(position vec4, texCoord vec2, color vec4) vec4 {
         if (fract(currentFloor.x)) <= 0.003 {
             currentFloor.x += 0.003
         }
-        texPos := vec2((fract(currentFloor.x) + mod(floorMapIndex, ScreenSize.x / TexSize)) * TexSize, (fract(currentFloor.y)) * TexSize)
+        texPos := vec2((fract(currentFloor.x) + mod(floorMapIndex, ScreenSize.x / TexSize)) * TexSize, (fract(currentFloor.y)) * TexSize) //テクスチャが多いときの折り返し未実装
+
+
         // texPos := (fract(currentFloor) + floorMapIndex) * TexSize
 
 

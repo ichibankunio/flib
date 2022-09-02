@@ -161,18 +161,18 @@ func (r *Renderer) calcSpriteRenderPos() {
 
 		if transPos.Y > 0 {
 			// s.wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength()*math.Min(SCREEN_HEIGHT/SCREEN_WIDTH*3/4, SCREEN_WIDTH/SCREEN_HEIGHT*4/3))
-			r.Wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength())
+			r.Wld.spriteRenderParam[6*i+1] = float32(relPos.SquaredLength())
 			// r.Wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength() *SCREEN_HEIGHT/SCREEN_HEIGHT*3/4)
 		} else {
-			r.Wld.spriteRenderParam[5*i] = float32(-1)
+			r.Wld.spriteRenderParam[6*i+1] = float32(-1)
 		}
 
 		// fmt.Printf("%f, %f, %f, %f\n", drawStart, spriteSize, relPos.SquaredLength(), transPos.Y)
 
-		r.Wld.spriteRenderParam[5*i+1] = float32(drawStart.X)
-		r.Wld.spriteRenderParam[5*i+2] = float32(drawStart.Y)
-		r.Wld.spriteRenderParam[5*i+3] = float32(spriteSize.X)
-		r.Wld.spriteRenderParam[5*i+4] = float32(spriteSize.Y)
+		r.Wld.spriteRenderParam[6*i+2] = float32(drawStart.X)
+		r.Wld.spriteRenderParam[6*i+3] = float32(drawStart.Y)
+		r.Wld.spriteRenderParam[6*i+4] = float32(spriteSize.X)
+		r.Wld.spriteRenderParam[6*i+5] = float32(spriteSize.Y)
 	}
 }
 
