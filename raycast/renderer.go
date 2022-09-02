@@ -30,7 +30,7 @@ type Renderer struct {
 	texSize int
 }
 
-func (r *Renderer) Init(screenWidth, screenHeight float64, wallTextures []*ebiten.Image, floorTextures []*ebiten.Image, spriteTexture *ebiten.Image, texSize int) {
+func (r *Renderer) Init(screenWidth, screenHeight float64, wallTextures []*ebiten.Image, floorTextures []*ebiten.Image, spriteTextures []*ebiten.Image, texSize int) {
 	r.Cam = &Camera{}
 	r.Cam.Init(screenWidth, screenHeight)
 
@@ -63,8 +63,13 @@ func (r *Renderer) Init(screenWidth, screenHeight float64, wallTextures []*ebite
 		op.GeoM.Translate(float64((i%(int(screenWidth)/texSize))*texSize), float64((i/(int(screenHeight)/texSize))*texSize))
 		r.wallTexture.DrawImage(t, op)
 	}
-
-	r.spriteTexture = spriteTexture
+	
+	r.spriteTexture = ebiten.NewImage(int(screenWidth), int(screenHeight))
+	for i, t := range spriteTextures {
+		op := &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(float64((i%(int(screenWidth)/texSize))*texSize), float64((i/(int(screenHeight)/texSize))*texSize))
+		r.spriteTexture.DrawImage(t, op)
+	}
 
 }
 
