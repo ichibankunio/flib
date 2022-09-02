@@ -15,9 +15,9 @@ import (
 var shaderByte []byte
 
 type Renderer struct {
-	cam *camera
-	stk *stick
-	wld *world
+	Cam *camera
+	Stk *stick
+	Wld *world
 
 	screenWidth float64
 	screenHeight float64
@@ -32,14 +32,14 @@ type Renderer struct {
 }
 
 func (r *Renderer) Init(screenWidth, screenHeight float64, wallTextures []*ebiten.Image, floorTextures []*ebiten.Image, spriteTexture *ebiten.Image, texSize int) {
-	r.cam = &camera{}
-	r.cam.Init(screenWidth, screenHeight)
+	r.Cam = &camera{}
+	r.Cam.Init(screenWidth, screenHeight)
 
-	r.stk = &stick{}
-	r.stk.Init(screenWidth, screenHeight)
+	r.Stk = &stick{}
+	r.Stk.Init(screenWidth, screenHeight)
 
-	r.wld = &world{}
-	r.wld.Init(screenWidth, screenHeight)
+	r.Wld = &world{}
+	r.Wld.Init(screenWidth, screenHeight)
 
 	r.screenWidth = screenWidth
 	r.screenHeight = screenHeight
@@ -69,6 +69,22 @@ func (r *Renderer) Init(screenWidth, screenHeight float64, wallTextures []*ebite
 
 }
 
+func (r *Renderer) SetShader(b []byte) error {
+	var err error
+	r.shader, err = ebiten.NewShader(b)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *Renderer) SetLevel(level [][]float32, width, height int) {
+	r.Wld.level = level
+	r.Wld.width = width
+	r.Wld.height = height
+}
+
 func (r *Renderer) GetScreenWidth() float64 {
 	return r.screenWidth
 }
@@ -79,23 +95,23 @@ func (r *Renderer) GetScreenHeight() float64 {
 
 func (r *Renderer) Update() {
 	r.updateCamera()
-	r.stk.update()
+	r.Stk.update()
 	r.calcSpriteRenderPos()
 }
 
 func (r *Renderer) Draw(screen *ebiten.Image) {
 	r.renderWall(screen)
 
-	r.wld.DrawTopView(screen)
+	r.Wld.DrawTopView(screen)
 
-	ebitenutil.DrawRect(screen, r.cam.pos.X/2-2, r.cam.pos.Y/2-2, 4, 4, color.RGBA{255, 0, 0, 255})
+	ebitenutil.DrawRect(screen, r.Cam.pos.X/2-2, r.Cam.pos.Y/2-2, 4, 4, color.RGBA{255, 0, 0, 255})
 
-	ebitenutil.DrawLine(screen, r.cam.pos.X/2, r.cam.pos.Y/2, r.cam.pos.X/2+r.cam.dir.X*200, r.cam.pos.Y/2+r.cam.dir.Y*200, color.RGBA{255, 0, 0, 255})
+	ebitenutil.DrawLine(screen, r.Cam.pos.X/2, r.Cam.pos.Y/2, r.Cam.pos.X/2+r.Cam.dir.X*200, r.Cam.pos.Y/2+r.Cam.dir.Y*200, color.RGBA{255, 0, 0, 255})
 
 	// s.fps.Draw(screen)
 	// s.debug.Draw(screen)
 
-	r.stk.Draw(screen)
+	r.Stk.Draw(screen)
 }
 
 func (r *Renderer) renderWall(screen *ebiten.Image) {
@@ -103,15 +119,15 @@ func (r *Renderer) renderWall(screen *ebiten.Image) {
 	op := &ebiten.DrawRectShaderOptions{}
 	op.Uniforms = map[string]interface{}{
 		"ScreenSize": []float32{float32(r.screenWidth), float32(r.screenHeight)},
-		"Pos":        []float32{float32(r.cam.pos.X / float64(r.wld.gridSize)), float32(r.cam.pos.Y / float64(r.wld.gridSize))},
-		"Dir":        []float32{float32(r.cam.dir.X), float32(r.cam.dir.Y)},
-		"Plane":      []float32{float32(r.cam.plane.X), float32(r.cam.plane.Y)},
-		"TexSize":    float32(r.wld.texSize) - 0.1,
-		// "MapSize":    []float32{float32(len(r.wld.level[0])), float32(len(r.wld.level))},
-		"WorldSize":   []float32{float32(r.wld.width), float32(r.wld.height)},
-		"Level":       r.wld.level,
-		"FloorLevel":  r.wld.floorLevel,
-		"SpriteParam": r.wld.spriteRenderParam,
+		"Pos":        []float32{float32(r.Cam.pos.X / float64(r.Wld.gridSize)), float32(r.Cam.pos.Y / float64(r.Wld.gridSize))},
+		"Dir":        []float32{float32(r.Cam.dir.X), float32(r.Cam.dir.Y)},
+		"Plane":      []float32{float32(r.Cam.plane.X), float32(r.Cam.plane.Y)},
+		"TexSize":    float32(r.Wld.texSize) - 0.1,
+		// "MapSize":    []float32{float32(len(r.Wld.level[0])), float32(len(r.Wld.level))},
+		"WorldSize":   []float32{float32(r.Wld.width), float32(r.Wld.height)},
+		"Level":       r.Wld.level[0],
+		"FloorLevel":  r.Wld.level[1],
+		"SpriteParam": r.Wld.spriteRenderParam,
 	}
 
 	op.Images[0] = r.wallTexture
@@ -122,10 +138,10 @@ func (r *Renderer) renderWall(screen *ebiten.Image) {
 }
 
 func (r *Renderer) calcSpriteRenderPos() {
-	invDet := 1.0 / (r.cam.plane.X*r.cam.dir.Y - r.cam.dir.X*r.cam.plane.Y) // 1/(ad-bc)
-	for i, pos := range r.wld.spritePos {
-		relPos := pos.Sub(r.cam.pos).Scale(1.0 / float64(r.wld.gridSize))
-		transPos := vec2.New(r.cam.dir.Y*relPos.X-r.cam.dir.X*relPos.Y, -r.cam.plane.Y*relPos.X+r.cam.plane.X*relPos.Y).Scale(invDet)
+	invDet := 1.0 / (r.Cam.plane.X*r.Cam.dir.Y - r.Cam.dir.X*r.Cam.plane.Y) // 1/(ad-bc)
+	for i, pos := range r.Wld.spritePos {
+		relPos := pos.Sub(r.Cam.pos).Scale(1.0 / float64(r.Wld.gridSize))
+		transPos := vec2.New(r.Cam.dir.Y*relPos.X-r.Cam.dir.X*relPos.Y, -r.Cam.plane.Y*relPos.X+r.Cam.plane.X*relPos.Y).Scale(invDet)
 		screenX := (r.screenWidth / 2) * (1.0 - transPos.X/transPos.Y)
 
 		//calculate height of the sprite on screen
@@ -139,25 +155,25 @@ func (r *Renderer) calcSpriteRenderPos() {
 
 		if transPos.Y > 0 {
 			// s.wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength()*math.Min(SCREEN_HEIGHT/SCREEN_WIDTH*3/4, SCREEN_WIDTH/SCREEN_HEIGHT*4/3))
-			r.wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength())
-			// r.wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength() *SCREEN_HEIGHT/SCREEN_HEIGHT*3/4)
+			r.Wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength())
+			// r.Wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength() *SCREEN_HEIGHT/SCREEN_HEIGHT*3/4)
 		} else {
-			r.wld.spriteRenderParam[5*i] = float32(-1)
+			r.Wld.spriteRenderParam[5*i] = float32(-1)
 		}
 
 		// fmt.Printf("%f, %f, %f, %f\n", drawStart, spriteSize, relPos.SquaredLength(), transPos.Y)
 
-		r.wld.spriteRenderParam[5*i+1] = float32(drawStart.X)
-		r.wld.spriteRenderParam[5*i+2] = float32(drawStart.Y)
-		r.wld.spriteRenderParam[5*i+3] = float32(spriteSize.X)
-		r.wld.spriteRenderParam[5*i+4] = float32(spriteSize.Y)
+		r.Wld.spriteRenderParam[5*i+1] = float32(drawStart.X)
+		r.Wld.spriteRenderParam[5*i+2] = float32(drawStart.Y)
+		r.Wld.spriteRenderParam[5*i+3] = float32(spriteSize.X)
+		r.Wld.spriteRenderParam[5*i+4] = float32(spriteSize.Y)
 	}
 }
 
 func (r *Renderer) castRay(dir, plane vec2.Vec2) float64 {
 	cameraX := 0.0 //x-coordinate in camera space
 	rayDir := dir.Add(plane.Scale(cameraX))
-	rayPos := vec2.New(r.cam.pos.X/float64(r.wld.gridSize), r.cam.pos.Y/float64(r.wld.gridSize))
+	rayPos := vec2.New(r.Cam.pos.X/float64(r.Wld.gridSize), r.Cam.pos.Y/float64(r.Wld.gridSize))
 	mapPos := vec2.New(math.Floor(rayPos.X), math.Floor(rayPos.Y))
 	deltaDist := vec2.New(math.Abs(1.0/rayDir.X), math.Abs(1.0/rayDir.Y))
 	perpWallDist := 0.0
@@ -191,7 +207,7 @@ func (r *Renderer) castRay(dir, plane vec2.Vec2) float64 {
 			side = 1.0
 		}
 
-		if r.wld.level[int(mapPos.Y)*r.wld.width+int(mapPos.X)] >= 1 {
+		if r.Wld.level[0][int(mapPos.Y)*r.Wld.width+int(mapPos.X)] >= 1 {
 			// hit = 1
 			break
 		}
@@ -211,44 +227,44 @@ func (r *Renderer) castRay(dir, plane vec2.Vec2) float64 {
 
 func (r *Renderer) updateCamera() {
 	rotateV := 0.02
-	if ebiten.IsKeyPressed(ebiten.KeyRight) || ebiten.GamepadAxisValue(0, 3) > 0.3 || r.stk.input[1] == STICK_RIGHT {
-		r.cam.dir = vec2.New(math.Cos(rotateV)*r.cam.dir.X-math.Sin(rotateV)*r.cam.dir.Y, math.Sin(rotateV)*r.cam.dir.X+math.Cos(rotateV)*r.cam.dir.Y)
+	if ebiten.IsKeyPressed(ebiten.KeyRight) || ebiten.GamepadAxisValue(0, 3) > 0.3 || r.Stk.input[1] == STICK_RIGHT {
+		r.Cam.dir = vec2.New(math.Cos(rotateV)*r.Cam.dir.X-math.Sin(rotateV)*r.Cam.dir.Y, math.Sin(rotateV)*r.Cam.dir.X+math.Cos(rotateV)*r.Cam.dir.Y)
 
-		r.cam.plane = vec2.New(math.Cos(rotateV)*r.cam.plane.X-math.Sin(rotateV)*r.cam.plane.Y, math.Sin(rotateV)*r.cam.plane.X+math.Cos(rotateV)*r.cam.plane.Y)
+		r.Cam.plane = vec2.New(math.Cos(rotateV)*r.Cam.plane.X-math.Sin(rotateV)*r.Cam.plane.Y, math.Sin(rotateV)*r.Cam.plane.X+math.Cos(rotateV)*r.Cam.plane.Y)
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyLeft) || ebiten.GamepadAxisValue(0, 3) < -0.3 || r.stk.input[1] == STICK_LEFT {
-		r.cam.dir = vec2.New(math.Cos(-rotateV)*r.cam.dir.X-math.Sin(-rotateV)*r.cam.dir.Y, math.Sin(-rotateV)*r.cam.dir.X+math.Cos(-rotateV)*r.cam.dir.Y)
+	if ebiten.IsKeyPressed(ebiten.KeyLeft) || ebiten.GamepadAxisValue(0, 3) < -0.3 || r.Stk.input[1] == STICK_LEFT {
+		r.Cam.dir = vec2.New(math.Cos(-rotateV)*r.Cam.dir.X-math.Sin(-rotateV)*r.Cam.dir.Y, math.Sin(-rotateV)*r.Cam.dir.X+math.Cos(-rotateV)*r.Cam.dir.Y)
 
-		r.cam.plane = vec2.New(math.Cos(-rotateV)*r.cam.plane.X-math.Sin(-rotateV)*r.cam.plane.Y, math.Sin(-rotateV)*r.cam.plane.X+math.Cos(-rotateV)*r.cam.plane.Y)
+		r.Cam.plane = vec2.New(math.Cos(-rotateV)*r.Cam.plane.X-math.Sin(-rotateV)*r.Cam.plane.Y, math.Sin(-rotateV)*r.Cam.plane.X+math.Cos(-rotateV)*r.Cam.plane.Y)
 	}
 
-	// r.CastRay(r.cam.dir, r.cam.plane)
+	// r.CastRay(r.Cam.dir, r.Cam.plane)
 
-	if ebiten.IsKeyPressed(ebiten.KeyW) || ebiten.IsKeyPressed(ebiten.KeyUp) || ebiten.GamepadAxisValue(0, 1) < -0.1 || r.stk.input[0] == STICK_UP {
-		r.cam.pos = r.cam.pos.Add(r.collisionCheckedDelta(r.cam.dir.Scale(r.cam.v)))
+	if ebiten.IsKeyPressed(ebiten.KeyW) || ebiten.IsKeyPressed(ebiten.KeyUp) || ebiten.GamepadAxisValue(0, 1) < -0.1 || r.Stk.input[0] == STICK_UP {
+		r.Cam.pos = r.Cam.pos.Add(r.collisionCheckedDelta(r.Cam.dir.Scale(r.Cam.v)))
 
-		// r.cam.pos = r.GetValidPos(r.cam.por.X + r.cam.dir.X*v, r.cam.por.Y + r.cam.dir.Y*v)
-	} else if ebiten.IsKeyPressed(ebiten.KeyS) || ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.GamepadAxisValue(0, 1) > 0.1 || r.stk.input[0] == STICK_DOWN {
+		// r.Cam.pos = r.GetValidPos(r.Cam.por.X + r.Cam.dir.X*v, r.Cam.por.Y + r.Cam.dir.Y*v)
+	} else if ebiten.IsKeyPressed(ebiten.KeyS) || ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.GamepadAxisValue(0, 1) > 0.1 || r.Stk.input[0] == STICK_DOWN {
 
-		r.cam.pos = r.cam.pos.Add(r.collisionCheckedDelta(r.cam.dir.Scale(-r.cam.v)))
+		r.Cam.pos = r.Cam.pos.Add(r.collisionCheckedDelta(r.Cam.dir.Scale(-r.Cam.v)))
 
-	} else if ebiten.IsKeyPressed(ebiten.KeyD) || ebiten.GamepadAxisValue(0, 0) > 0.1 || r.stk.input[0] == STICK_RIGHT {
+	} else if ebiten.IsKeyPressed(ebiten.KeyD) || ebiten.GamepadAxisValue(0, 0) > 0.1 || r.Stk.input[0] == STICK_RIGHT {
 
-		r.cam.pos = r.cam.pos.Add(r.collisionCheckedDelta(r.cam.plane.Scale(-r.cam.v)))
+		r.Cam.pos = r.Cam.pos.Add(r.collisionCheckedDelta(r.Cam.plane.Scale(-r.Cam.v)))
 
-	} else if ebiten.IsKeyPressed(ebiten.KeyA) || ebiten.GamepadAxisValue(0, 0) < -0.1 || r.stk.input[0] == STICK_LEFT {
+	} else if ebiten.IsKeyPressed(ebiten.KeyA) || ebiten.GamepadAxisValue(0, 0) < -0.1 || r.Stk.input[0] == STICK_LEFT {
 
-		r.cam.pos = r.cam.pos.Add(r.collisionCheckedDelta(r.cam.plane.Scale(r.cam.v)))
+		r.Cam.pos = r.Cam.pos.Add(r.collisionCheckedDelta(r.Cam.plane.Scale(r.Cam.v)))
 
 	}
 
 }
 
 func (r *Renderer) collisionCheckedDelta(delta vec2.Vec2) vec2.Vec2 {
-	if (delta.X > 0 && r.castRay(vec2.New(1, 0), r.cam.plane) <= r.cam.collisionDistance) || (delta.X < 0 && r.castRay(vec2.New(-1, 0), r.cam.plane) <= r.cam.collisionDistance) {
+	if (delta.X > 0 && r.castRay(vec2.New(1, 0), r.Cam.plane) <= r.Cam.collisionDistance) || (delta.X < 0 && r.castRay(vec2.New(-1, 0), r.Cam.plane) <= r.Cam.collisionDistance) {
 		delta.X = 0
 	}
-	if (delta.Y > 0 && r.castRay(vec2.New(0, 1), r.cam.plane) <= r.cam.collisionDistance) || (delta.Y < 0 && r.castRay(vec2.New(0, -1), r.cam.plane) <= r.cam.collisionDistance) {
+	if (delta.Y > 0 && r.castRay(vec2.New(0, 1), r.Cam.plane) <= r.Cam.collisionDistance) || (delta.Y < 0 && r.castRay(vec2.New(0, -1), r.Cam.plane) <= r.Cam.collisionDistance) {
 		delta.Y = 0
 	}
 
