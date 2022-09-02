@@ -7,7 +7,7 @@ import (
 	"github.com/ichibankunio/flib/vec2"
 )
 
-type world struct {
+type World struct {
 	// level    [][]int
 	// level          []float32
 	level [][]float32
@@ -31,7 +31,7 @@ type world struct {
 	spriteRenderParam []float32
 }
 
-func (w *world) Init(screenWidth, screenHeight float64) {
+func (w *World) Init(screenWidth, screenHeight float64) {
 	w.gridSize = 64
 	w.width = 10
 	w.height = 10
@@ -92,26 +92,6 @@ func (w *world) Init(screenWidth, screenHeight float64) {
 
 	w.spriteRenderParam = make([]float32, 5)
 
-	w.topImage = ebiten.NewImage(w.gridSize*w.width, w.gridSize*w.height)
-	// w.topImage.Fill(color.RGBA{120, 120, 120, 120})
-	grid1 := ebiten.NewImage(w.gridSize-2, w.gridSize-2)
-	grid1.Fill(color.RGBA{120, 120, 255, 120})
-	grid2 := ebiten.NewImage(w.gridSize-2, w.gridSize-2)
-	grid2.Fill(color.RGBA{120, 120, 120, 120})
-
-	for y := 0; y < w.height; y++ {
-		for x := 0; x < w.width; x++ {
-			op := &ebiten.DrawImageOptions{}
-			op.GeoM.Translate(float64(x*w.gridSize+1), float64(y*w.gridSize+1))
-			switch w.level[0][y*w.width+x] {
-			case 0:
-				w.topImage.DrawImage(grid2, op)
-			case 1:
-				w.topImage.DrawImage(grid1, op)
-			}
-		}
-	}
-
 	// w.buffer = ebiten.NewImage(SCREEN_WIDTH, SCREEN_HEIGHT)
 	w.texSize = 64
 
@@ -147,7 +127,29 @@ func (w *world) Init(screenWidth, screenHeight float64) {
 
 }
 
-func (w *world) DrawTopView(screen *ebiten.Image) {
+func (w *World) NewTopView() {
+	w.topImage = ebiten.NewImage(w.gridSize*w.width, w.gridSize*w.height)
+	grid1 := ebiten.NewImage(w.gridSize-2, w.gridSize-2)
+	grid1.Fill(color.RGBA{120, 120, 255, 120})
+	grid2 := ebiten.NewImage(w.gridSize-2, w.gridSize-2)
+	grid2.Fill(color.RGBA{120, 120, 120, 120})
+
+	for y := 0; y < w.height; y++ {
+		for x := 0; x < w.width; x++ {
+			op := &ebiten.DrawImageOptions{}
+			op.GeoM.Translate(float64(x*w.gridSize+1), float64(y*w.gridSize+1))
+			switch w.level[0][y*w.width+x] {
+			case 0:
+				w.topImage.DrawImage(grid2, op)
+			case 1:
+				w.topImage.DrawImage(grid1, op)
+			}
+		}
+	}
+
+}
+
+func (w *World) DrawTopView(screen *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Scale(0.5, 0.5)
 	op.GeoM.Translate(0, 0)

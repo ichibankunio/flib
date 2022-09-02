@@ -15,9 +15,9 @@ import (
 var shaderByte []byte
 
 type Renderer struct {
-	Cam *camera
-	Stk *stick
-	Wld *world
+	Cam *Camera
+	Stk *Stick
+	Wld *World
 
 	screenWidth float64
 	screenHeight float64
@@ -28,17 +28,16 @@ type Renderer struct {
 	spriteTexture *ebiten.Image
 	wallTexture *ebiten.Image
 	texSize int
-	
 }
 
 func (r *Renderer) Init(screenWidth, screenHeight float64, wallTextures []*ebiten.Image, floorTextures []*ebiten.Image, spriteTexture *ebiten.Image, texSize int) {
-	r.Cam = &camera{}
+	r.Cam = &Camera{}
 	r.Cam.Init(screenWidth, screenHeight)
 
-	r.Stk = &stick{}
+	r.Stk = &Stick{}
 	r.Stk.Init(screenWidth, screenHeight)
 
-	r.Wld = &world{}
+	r.Wld = &World{}
 	r.Wld.Init(screenWidth, screenHeight)
 
 	r.screenWidth = screenWidth
@@ -84,6 +83,8 @@ func (r *Renderer) SetLevel(level [][]float32, width, height int) {
 	r.Wld.width = width
 	r.Wld.height = height
 }
+
+
 
 func (r *Renderer) GetScreenWidth() float64 {
 	return r.screenWidth
@@ -237,8 +238,6 @@ func (r *Renderer) updateCamera() {
 
 		r.Cam.plane = vec2.New(math.Cos(-rotateV)*r.Cam.plane.X-math.Sin(-rotateV)*r.Cam.plane.Y, math.Sin(-rotateV)*r.Cam.plane.X+math.Cos(-rotateV)*r.Cam.plane.Y)
 	}
-
-	// r.CastRay(r.Cam.dir, r.Cam.plane)
 
 	if ebiten.IsKeyPressed(ebiten.KeyW) || ebiten.IsKeyPressed(ebiten.KeyUp) || ebiten.GamepadAxisValue(0, 1) < -0.1 || r.Stk.input[0] == STICK_UP {
 		r.Cam.pos = r.Cam.pos.Add(r.collisionCheckedDelta(r.Cam.dir.Scale(r.Cam.v)))

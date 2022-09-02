@@ -10,7 +10,7 @@ import (
 	"github.com/ichibankunio/flib/vec2"
 )
 
-type stick struct {
+type Stick struct {
 	// pos     vec2.Vec2
 	visible  [2]bool
 	img      *ebiten.Image
@@ -32,7 +32,7 @@ const (
 	STICK_RIGHT
 )
 
-func (s *stick) Init(screenWidth, screenHeight float64) {
+func (s *Stick) Init(screenWidth, screenHeight float64) {
 	s.screenWidth = screenWidth
 	s.screenHeight = screenHeight
 	// s.pos = vec2.New(0, 0)
@@ -54,7 +54,7 @@ func (s *stick) Init(screenWidth, screenHeight float64) {
 	// s.img.Fill(color.RGBA{200, 200, 200, 50})
 }
 
-func (s *stick) update() {
+func (s *Stick) update() {
 	if len(inpututil.AppendJustPressedTouchIDs(nil)) > 0 {
 		for _, id := range inpututil.AppendJustPressedTouchIDs(nil) {
 			x, y := ebiten.TouchPosition(id)
@@ -154,7 +154,7 @@ func (s *stick) update() {
 
 }
 
-func (s *stick) Draw(screen *ebiten.Image) {
+func (s *Stick) Draw(screen *ebiten.Image) {
 	if s.visible[0] {
 		op := &ebiten.DrawImageOptions{}
 		op.GeoM.Translate(s.pos[0].X, s.pos[0].Y)
