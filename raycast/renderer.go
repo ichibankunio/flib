@@ -127,7 +127,7 @@ func (r *Renderer) renderWall(screen *ebiten.Image) {
 		"Pos":        []float32{float32(r.Cam.pos.X / float64(r.Wld.gridSize)), float32(r.Cam.pos.Y / float64(r.Wld.gridSize))},
 		"Dir":        []float32{float32(r.Cam.dir.X), float32(r.Cam.dir.Y)},
 		"Plane":      []float32{float32(r.Cam.plane.X), float32(r.Cam.plane.Y)},
-		"TexSize":    float32(r.Wld.texSize) - 0.1,
+		"TexSize":    float32(r.Wld.texSize),
 		// "MapSize":    []float32{float32(len(r.Wld.level[0])), float32(len(r.Wld.level))},
 		"WorldSize":   []float32{float32(r.Wld.width), float32(r.Wld.height)},
 		"Level":       r.Wld.level[0],
