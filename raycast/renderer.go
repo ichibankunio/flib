@@ -192,9 +192,8 @@ func (w *World) sortSpriteRenderParam() {
 			if w.spriteRenderParam[6*j] < 0 || w.spriteRenderParam[6*(j+1)] < 0 {
 				return
 			}
-			
-			if w.spriteRenderParam[6*j+1] > w.spriteRenderParam[6*(j+1)+1] {
 
+			if w.spriteRenderParam[6*j+1] > w.spriteRenderParam[6*(j+1)+1] {
 				for k := 0; k < 6; k++ {
 					tmp := w.spriteRenderParam[6*j+k]
 					w.spriteRenderParam[6*j+k] = w.spriteRenderParam[6*(j+1)+k]
