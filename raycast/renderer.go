@@ -165,7 +165,6 @@ func (r *Renderer) calcSpriteRenderPos() {
 			r.Wld.SpriteRenderParam[6*i+1] = float32(-1)
 		}
 
-		// fmt.Printf("%f, %f, %f, %f\n", drawStart, spriteSize, relPos.SquaredLength(), transPos.Y)
 
 		r.Wld.SpriteRenderParam[6*i+2] = float32(drawStart.X)
 		r.Wld.SpriteRenderParam[6*i+3] = float32(drawStart.Y)
