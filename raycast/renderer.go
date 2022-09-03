@@ -176,10 +176,10 @@ func (r *Renderer) calcSpriteRenderPos() {
 
 	r.Wld.sortSpriteRenderParam()
 
-	for i := 0; i < 24; i++ {
-		fmt.Printf("%.2f,", r.Wld.spriteRenderParam[i])
-	}
-	println("")
+	// for i := 0; i < 24; i++ {
+	// 	fmt.Printf("%.2f,", r.Wld.spriteRenderParam[i])
+	// }
+	// println("")
 }
 
 func (w *World) sortSpriteRenderParam() {
@@ -203,6 +203,10 @@ func (w *World) sortSpriteRenderParam() {
 					w.spriteRenderParam[6*j+k], w.spriteRenderParam[6*(j+1)+k] = w.spriteRenderParam[6*(j+1)+k], w.spriteRenderParam[6*j+k]
 					// w.spriteRenderParam[6*j+k] = w.spriteRenderParam[6*(j+1)+k]
 					// w.spriteRenderParam[6*(j+1)+k] = tmp
+					for i := 0; i < 24; i++ {
+						fmt.Printf("%.2f,", w.spriteRenderParam[i])
+					}
+					println("")
 				}
 				println("sort performed", i, j)
 			}
