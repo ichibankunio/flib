@@ -224,9 +224,9 @@ func Fragment(position vec4, texCoord vec2, color vec4) vec4 {
         currentFloor := vec2(weight*rayHitPos.x+(1.0-weight)*Pos.x, weight*rayHitPos.y+(1.0-weight)*Pos.y) //平面図において線形補完
         floorMapIndex := GetFloorMap(int(currentFloor.x), int(currentFloor.y)) - 1.0
         // texPos := vec2((fract(currentFloor.x)) * TexSize, (fract(currentFloor.y)) * TexSize)
-        if (fract(currentFloor.x)) <= 0.003 {
-            currentFloor.x += 0.003
-        }
+        // if (fract(currentFloor.x)) <= 0.003 {
+        //     currentFloor.x += 0.003
+        // }
         texPos := vec2((fract(currentFloor.x) + mod(floorMapIndex, ScreenSize.x / TexSize)) * TexSize, (fract(currentFloor.y)) * TexSize) //テクスチャが多いときの折り返し未実装
 
 
