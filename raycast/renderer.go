@@ -143,6 +143,46 @@ func (r *Renderer) renderWall(screen *ebiten.Image) {
 
 func (r *Renderer) calcSpriteRenderPos() {
 	invDet := 1.0 / (r.Cam.plane.X*r.Cam.dir.Y - r.Cam.dir.X*r.Cam.plane.Y) // 1/(ad-bc)
+	for _, spr := range r.Wld.Sprites {
+		relPos := spr.Pos.Sub(r.Cam.pos).Scale(1.0 / float64(r.Wld.gridSize))
+		transPos := vec2.New(r.Cam.dir.Y*relPos.X-r.Cam.dir.X*relPos.Y, -r.Cam.plane.Y*relPos.X+r.Cam.plane.X*relPos.Y).Scale(invDet)
+		screenX := (r.screenWidth / 2) * (1.0 - transPos.X/transPos.Y)
+
+		//calculate height of the sprite on screen
+		spriteSize := vec2.New(math.Abs(r.screenHeight/transPos.Y), math.Abs(r.screenHeight/transPos.Y))
+		// spriteHeight := math.Abs(SCREEN_HEIGHT / transPos.Y) //using 'transformY' instead of the real distance prevents fisheye
+		// spriteWidth := math.Abs(SCREEN_HEIGHT / transPos.Y)
+
+		//calculate lowest and highest pixel to fill in current stripe
+		drawStart := vec2.New(-spriteSize.X/2+screenX, -spriteSize.Y/2+r.screenHeight/2)
+		// drawEnd := vec2.New(spriteWidth/2+screenX, spriteHeight/2+SCREEN_HEIGHT/2)
+
+		if transPos.Y > 0 {
+			// s.wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength()*math.Min(SCREEN_HEIGHT/SCREEN_WIDTH*3/4, SCREEN_WIDTH/SCREEN_HEIGHT*4/3))
+			r.Wld.SpriteRenderParam[6*spr.ID+1] = float32(relPos.SquaredLength())
+			// r.Wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength() *SCREEN_HEIGHT/SCREEN_HEIGHT*3/4)
+		} else {
+			r.Wld.SpriteRenderParam[6*spr.ID+1] = float32(-1)
+		}
+
+		// fmt.Printf("%f, %f, %f, %f\n", drawStart, spriteSize, relPos.SquaredLength(), transPos.Y)
+
+		r.Wld.SpriteRenderParam[6*spr.ID+2] = float32(drawStart.X)
+		r.Wld.SpriteRenderParam[6*spr.ID+3] = float32(drawStart.Y)
+		r.Wld.SpriteRenderParam[6*spr.ID+4] = float32(spriteSize.X)
+		r.Wld.SpriteRenderParam[6*spr.ID+5] = float32(spriteSize.Y)
+	}
+
+	r.Wld.sortSpriteRenderParam()
+
+	// for i := 0; i < 24; i++ {
+	// 	fmt.Printf("%.2f,", r.Wld.spriteRenderParam[i])
+	// }
+	// println("")
+}
+
+func (r *Renderer) calcSpriteRenderPos2() {
+	invDet := 1.0 / (r.Cam.plane.X*r.Cam.dir.Y - r.Cam.dir.X*r.Cam.plane.Y) // 1/(ad-bc)
 	for i, pos := range r.Wld.SpritePos {
 		relPos := pos.Sub(r.Cam.pos).Scale(1.0 / float64(r.Wld.gridSize))
 		transPos := vec2.New(r.Cam.dir.Y*relPos.X-r.Cam.dir.X*relPos.Y, -r.Cam.plane.Y*relPos.X+r.Cam.plane.X*relPos.Y).Scale(invDet)
@@ -182,12 +222,12 @@ func (r *Renderer) calcSpriteRenderPos() {
 }
 
 func (w *World) sortSpriteRenderParam() {
-	if len(w.SpritePos) < 2 {
+	if len(w.Sprites) < 2 {
 		return
 	}
 
-	for i := 0; i < len(w.SpritePos)-1; i++ {
-		for j := 0; j < len(w.SpritePos)-i-1; j++ {
+	for i := 0; i < len(w.Sprites)-1; i++ {
+		for j := 0; j < len(w.Sprites)-i-1; j++ {
 			if w.SpriteRenderParam[6*j+1] > w.SpriteRenderParam[6*(j+1)+1] {
 				for k := 0; k < 6; k++ {
 					// fmt.Printf("%d, %d\n", 6*j+k, 6*(j+1)+k)
@@ -197,7 +237,7 @@ func (w *World) sortSpriteRenderParam() {
 					// w.SpriteRenderParam[6*j+k] = w.SpriteRenderParam[6*(j+1)+k]
 					// w.SpriteRenderParam[6*(j+1)+k] = tmp
 				}
-				w.SpritePos[j], w.SpritePos[j+1] = w.SpritePos[j+1], w.SpritePos[j]
+				w.Sprites[j], w.Sprites[j+1] = w.Sprites[j+1], w.Sprites[j]
 
 			}
 		}
