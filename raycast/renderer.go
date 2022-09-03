@@ -193,10 +193,12 @@ func (w *World) sortSpriteRenderParam() {
 			// 	break
 			// }
 
-			fmt.Printf("%f, %f\n", w.spriteRenderParam[6*j+1], w.spriteRenderParam[6*(j+1)+1])
-			fmt.Printf("%f, %f\n", w.spriteRenderParam[6*j], w.spriteRenderParam[6*(j+1)])
+			// fmt.Printf("%f, %f\n", w.spriteRenderParam[6*j+1], w.spriteRenderParam[6*(j+1)+1])
+			// fmt.Printf("%f, %f\n", w.spriteRenderParam[6*j], w.spriteRenderParam[6*(j+1)])
 			if w.spriteRenderParam[6*j+1] > w.spriteRenderParam[6*(j+1)+1] {
 				for k := 0; k < 6; k++ {
+					fmt.Printf("%d, %d\n", 6*j+k, 6*(j+1)+k)
+
 					// tmp := w.spriteRenderParam[6*j+k]
 					w.spriteRenderParam[6*j+k], w.spriteRenderParam[6*(j+1)+k] = w.spriteRenderParam[6*(j+1)+k], w.spriteRenderParam[6*j+k]
 					// w.spriteRenderParam[6*j+k] = w.spriteRenderParam[6*(j+1)+k]
