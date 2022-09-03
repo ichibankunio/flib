@@ -176,8 +176,8 @@ func (r *Renderer) calcSpriteRenderPos() {
 
 	r.Wld.sortSpriteRenderParam()
 
-	for i := 0; i < len(r.Wld.spriteRenderParam); i++ {
-		fmt.Printf("%f,", r.Wld.spriteRenderParam[i])
+	for i := 0; i < 12; i++ {
+		fmt.Printf("%.2f,", r.Wld.spriteRenderParam[i])
 	}
 	println("")
 }
