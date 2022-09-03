@@ -69,25 +69,25 @@ func (w *World) NewSprite(pos vec2.Vec2, texID int) {
 			TexID: texID,
 		})
 
-		w.SpriteRenderParam[6*(len(w.SpritePos)-1)] = float32(texID)
-		w.SpriteRenderParam[6*(len(w.SpritePos)-1)+1] = 0
-		w.SpriteRenderParam[6*(len(w.SpritePos)-1)+2] = 0
-		w.SpriteRenderParam[6*(len(w.SpritePos)-1)+3] = 0
-		w.SpriteRenderParam[6*(len(w.SpritePos)-1)+4] = 0
-		w.SpriteRenderParam[6*(len(w.SpritePos)-1)+5] = 0
+		w.SpriteRenderParam[6*(len(w.Sprites)-1)] = float32(texID)
+		w.SpriteRenderParam[6*(len(w.Sprites)-1)+1] = 0
+		w.SpriteRenderParam[6*(len(w.Sprites)-1)+2] = 0
+		w.SpriteRenderParam[6*(len(w.Sprites)-1)+3] = 0
+		w.SpriteRenderParam[6*(len(w.Sprites)-1)+4] = 0
+		w.SpriteRenderParam[6*(len(w.Sprites)-1)+5] = 0
 
 	}
 
-	if len(w.SpritePos) < 10 {
-		w.SpritePos = append(w.SpritePos, pos)
-		w.SpriteRenderParam[6*(len(w.SpritePos)-1)] = float32(texID)
-		w.SpriteRenderParam[6*(len(w.SpritePos)-1)+1] = 0
-		w.SpriteRenderParam[6*(len(w.SpritePos)-1)+2] = 0
-		w.SpriteRenderParam[6*(len(w.SpritePos)-1)+3] = 0
-		w.SpriteRenderParam[6*(len(w.SpritePos)-1)+4] = 0
-		w.SpriteRenderParam[6*(len(w.SpritePos)-1)+5] = 0
+	// if len(w.SpritePos) < 10 {
+	// 	w.SpritePos = append(w.SpritePos, pos)
+	// 	w.SpriteRenderParam[6*(len(w.SpritePos)-1)] = float32(texID)
+	// 	w.SpriteRenderParam[6*(len(w.SpritePos)-1)+1] = 0
+	// 	w.SpriteRenderParam[6*(len(w.SpritePos)-1)+2] = 0
+	// 	w.SpriteRenderParam[6*(len(w.SpritePos)-1)+3] = 0
+	// 	w.SpriteRenderParam[6*(len(w.SpritePos)-1)+4] = 0
+	// 	w.SpriteRenderParam[6*(len(w.SpritePos)-1)+5] = 0
 
-	}
+	// }
 }
 
 func (w *World) NewTopView() {
