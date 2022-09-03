@@ -176,7 +176,7 @@ func (r *Renderer) calcSpriteRenderPos() {
 
 	r.Wld.sortSpriteRenderParam()
 
-	for i := 0; i < 18; i++ {
+	for i := 0; i < 24; i++ {
 		fmt.Printf("%.2f,", r.Wld.spriteRenderParam[i])
 	}
 	println("")
@@ -193,7 +193,7 @@ func (w *World) sortSpriteRenderParam() {
 				break
 			}
 
-			fmt.Printf("%f, %f\n", w.spriteRenderParam[6*j+1], w.spriteRenderParam[6*(j+1)+1])
+			fmt.Printf("%f, %f\n", w.spriteRenderParam[6*j], w.spriteRenderParam[6*(j+1)])
 			if w.spriteRenderParam[6*j+1] > w.spriteRenderParam[6*(j+1)+1] {
 				for k := 0; k < 6; k++ {
 					tmp := w.spriteRenderParam[6*j+k]
