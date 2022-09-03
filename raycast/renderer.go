@@ -4,7 +4,7 @@ import (
 	"image/color"
 	"math"
 
-	_"embed"
+	_ "embed"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -19,15 +19,15 @@ type Renderer struct {
 	Stk *Stick
 	Wld *World
 
-	screenWidth float64
+	screenWidth  float64
 	screenHeight float64
 
 	shader *ebiten.Shader
 
-	floorTexture *ebiten.Image
+	floorTexture  *ebiten.Image
 	spriteTexture *ebiten.Image
-	wallTexture *ebiten.Image
-	texSize int
+	wallTexture   *ebiten.Image
+	texSize       int
 }
 
 func (r *Renderer) Init(screenWidth, screenHeight float64, wallTextures []*ebiten.Image, floorTextures []*ebiten.Image, spriteTextures []*ebiten.Image, texSize int) {
@@ -63,7 +63,7 @@ func (r *Renderer) Init(screenWidth, screenHeight float64, wallTextures []*ebite
 		op.GeoM.Translate(float64((i%(int(screenWidth)/texSize))*texSize), float64((i/(int(screenHeight)/texSize))*texSize))
 		r.wallTexture.DrawImage(t, op)
 	}
-	
+
 	r.spriteTexture = ebiten.NewImage(int(screenWidth), int(screenHeight))
 	for i, t := range spriteTextures {
 		op := &ebiten.DrawImageOptions{}
@@ -88,8 +88,6 @@ func (r *Renderer) SetLevel(level [][]float32, width, height int) {
 	r.Wld.width = width
 	r.Wld.height = height
 }
-
-
 
 func (r *Renderer) GetScreenWidth() float64 {
 	return r.screenWidth
@@ -173,6 +171,23 @@ func (r *Renderer) calcSpriteRenderPos() {
 		r.Wld.spriteRenderParam[6*i+3] = float32(drawStart.Y)
 		r.Wld.spriteRenderParam[6*i+4] = float32(spriteSize.X)
 		r.Wld.spriteRenderParam[6*i+5] = float32(spriteSize.Y)
+	}
+	
+	r.Wld.sortSpriteRenderParam()
+}
+
+func (w *World) sortSpriteRenderParam() {
+	for i := 0; i < len(w.spritePos); i++ {
+		for j := 0; j < len(w.spritePos)-i; j++ {
+			if w.spriteRenderParam[6*j+1] > w.spriteRenderParam[6*(j+1)+1] {
+				tmp := w.spriteRenderParam[6*j:6*j+5]
+				for k := 0; k < 6; k++ {
+					w.spriteRenderParam[6*j+k] = w.spriteRenderParam[6*(j+1)+k]
+					w.spriteRenderParam[6*(j+1)+k] = tmp[k]
+				}
+			}
+		}
+
 	}
 }
 
