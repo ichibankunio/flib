@@ -187,8 +187,8 @@ func (w *World) sortSpriteRenderParam() {
 		return
 	}
 
-	for i := 0; i < len(w.spritePos); i++ {
-		for j := 0; j < len(w.spritePos)-i; j++ {
+	for i := 0; i < len(w.spritePos)-1; i++ {
+		for j := 0; j < len(w.spritePos)-i-1; j++ {
 			if w.spriteRenderParam[6*j] < 0 || w.spriteRenderParam[6*(j+1)] < 0 {
 				break
 			}
