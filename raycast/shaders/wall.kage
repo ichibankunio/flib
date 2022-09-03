@@ -217,7 +217,6 @@ func Fragment(position vec4, texCoord vec2, color vec4) vec4 {
 
         distToIntersectionWithBottomOfWall := perpWallDist
         distPlayer := 0.0
-        // println(int(r.renderPos.Y+r.lineHeight) + 1)
         distToIntersectionWithFloor := ScreenSize.y / (2.0*position.y - ScreenSize.y) //この代わりに小さなルックアップ テーブルを作成できます
         weight := (distToIntersectionWithFloor - distPlayer) / (distToIntersectionWithBottomOfWall - distPlayer)//0-1
 
