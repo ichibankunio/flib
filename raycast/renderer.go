@@ -181,45 +181,45 @@ func (r *Renderer) calcSpriteRenderPos() {
 	// println("")
 }
 
-func (r *Renderer) calcSpriteRenderPos2() {
-	invDet := 1.0 / (r.Cam.plane.X*r.Cam.dir.Y - r.Cam.dir.X*r.Cam.plane.Y) // 1/(ad-bc)
-	for i, pos := range r.Wld.SpritePos {
-		relPos := pos.Sub(r.Cam.pos).Scale(1.0 / float64(r.Wld.gridSize))
-		transPos := vec2.New(r.Cam.dir.Y*relPos.X-r.Cam.dir.X*relPos.Y, -r.Cam.plane.Y*relPos.X+r.Cam.plane.X*relPos.Y).Scale(invDet)
-		screenX := (r.screenWidth / 2) * (1.0 - transPos.X/transPos.Y)
+// func (r *Renderer) calcSpriteRenderPos2() {
+// 	invDet := 1.0 / (r.Cam.plane.X*r.Cam.dir.Y - r.Cam.dir.X*r.Cam.plane.Y) // 1/(ad-bc)
+// 	for i, pos := range r.Wld.SpritePos {
+// 		relPos := pos.Sub(r.Cam.pos).Scale(1.0 / float64(r.Wld.gridSize))
+// 		transPos := vec2.New(r.Cam.dir.Y*relPos.X-r.Cam.dir.X*relPos.Y, -r.Cam.plane.Y*relPos.X+r.Cam.plane.X*relPos.Y).Scale(invDet)
+// 		screenX := (r.screenWidth / 2) * (1.0 - transPos.X/transPos.Y)
 
-		//calculate height of the sprite on screen
-		spriteSize := vec2.New(math.Abs(r.screenHeight/transPos.Y), math.Abs(r.screenHeight/transPos.Y))
-		// spriteHeight := math.Abs(SCREEN_HEIGHT / transPos.Y) //using 'transformY' instead of the real distance prevents fisheye
-		// spriteWidth := math.Abs(SCREEN_HEIGHT / transPos.Y)
+// 		//calculate height of the sprite on screen
+// 		spriteSize := vec2.New(math.Abs(r.screenHeight/transPos.Y), math.Abs(r.screenHeight/transPos.Y))
+// 		// spriteHeight := math.Abs(SCREEN_HEIGHT / transPos.Y) //using 'transformY' instead of the real distance prevents fisheye
+// 		// spriteWidth := math.Abs(SCREEN_HEIGHT / transPos.Y)
 
-		//calculate lowest and highest pixel to fill in current stripe
-		drawStart := vec2.New(-spriteSize.X/2+screenX, -spriteSize.Y/2+r.screenHeight/2)
-		// drawEnd := vec2.New(spriteWidth/2+screenX, spriteHeight/2+SCREEN_HEIGHT/2)
+// 		//calculate lowest and highest pixel to fill in current stripe
+// 		drawStart := vec2.New(-spriteSize.X/2+screenX, -spriteSize.Y/2+r.screenHeight/2)
+// 		// drawEnd := vec2.New(spriteWidth/2+screenX, spriteHeight/2+SCREEN_HEIGHT/2)
 
-		if transPos.Y > 0 {
-			// s.wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength()*math.Min(SCREEN_HEIGHT/SCREEN_WIDTH*3/4, SCREEN_WIDTH/SCREEN_HEIGHT*4/3))
-			r.Wld.SpriteRenderParam[6*i+1] = float32(relPos.SquaredLength())
-			// r.Wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength() *SCREEN_HEIGHT/SCREEN_HEIGHT*3/4)
-		} else {
-			r.Wld.SpriteRenderParam[6*i+1] = float32(-1)
-		}
+// 		if transPos.Y > 0 {
+// 			// s.wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength()*math.Min(SCREEN_HEIGHT/SCREEN_WIDTH*3/4, SCREEN_WIDTH/SCREEN_HEIGHT*4/3))
+// 			r.Wld.SpriteRenderParam[6*i+1] = float32(relPos.SquaredLength())
+// 			// r.Wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength() *SCREEN_HEIGHT/SCREEN_HEIGHT*3/4)
+// 		} else {
+// 			r.Wld.SpriteRenderParam[6*i+1] = float32(-1)
+// 		}
 
-		// fmt.Printf("%f, %f, %f, %f\n", drawStart, spriteSize, relPos.SquaredLength(), transPos.Y)
+// 		// fmt.Printf("%f, %f, %f, %f\n", drawStart, spriteSize, relPos.SquaredLength(), transPos.Y)
 
-		r.Wld.SpriteRenderParam[6*i+2] = float32(drawStart.X)
-		r.Wld.SpriteRenderParam[6*i+3] = float32(drawStart.Y)
-		r.Wld.SpriteRenderParam[6*i+4] = float32(spriteSize.X)
-		r.Wld.SpriteRenderParam[6*i+5] = float32(spriteSize.Y)
-	}
+// 		r.Wld.SpriteRenderParam[6*i+2] = float32(drawStart.X)
+// 		r.Wld.SpriteRenderParam[6*i+3] = float32(drawStart.Y)
+// 		r.Wld.SpriteRenderParam[6*i+4] = float32(spriteSize.X)
+// 		r.Wld.SpriteRenderParam[6*i+5] = float32(spriteSize.Y)
+// 	}
 
-	r.Wld.sortSpriteRenderParam()
+// 	r.Wld.sortSpriteRenderParam()
 
-	// for i := 0; i < 24; i++ {
-	// 	fmt.Printf("%.2f,", r.Wld.spriteRenderParam[i])
-	// }
-	// println("")
-}
+// 	// for i := 0; i < 24; i++ {
+// 	// 	fmt.Printf("%.2f,", r.Wld.spriteRenderParam[i])
+// 	// }
+// 	// println("")
+// }
 
 func (w *World) sortSpriteRenderParam() {
 	if len(w.Sprites) < 2 {

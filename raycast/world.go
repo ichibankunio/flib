@@ -27,7 +27,7 @@ type World struct {
 	width  int
 	height int
 
-	SpritePos         []vec2.Vec2
+	// SpritePos         []vec2.Vec2
 	SpriteRenderParam []float32
 
 	Sprites []*Sprite
@@ -62,7 +62,7 @@ func (w *World) Init(screenWidth, screenHeight float64) {
 }
 
 func (w *World) NewSprite(pos vec2.Vec2, texID int) {
-	if len(w.SpritePos) < 10 {
+	if len(w.Sprites) < 10 {
 		w.Sprites = append(w.Sprites, &Sprite{
 			Pos: pos,
 			ID: len(w.Sprites),
