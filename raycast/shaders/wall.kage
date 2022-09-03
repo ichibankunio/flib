@@ -115,12 +115,12 @@ func Fragment(position vec4, texCoord vec2, color vec4) vec4 {
     //sprite casting
 
     for i := 0; i < len(SpriteParam) / 6; i++ {
-        if SpriteParam[0] < 0 {
+        if SpriteParam[i * 6] < 0 {
             break
         }
         
-        if SpriteParam[1] >= 0 && SpriteParam[1] < squaredEuclidean && position.x > SpriteParam[2] && position.x < SpriteParam[2] + SpriteParam[4] && position.y > SpriteParam[3] && position.y < SpriteParam[3] + SpriteParam[5] {
-            texPos := vec2((position.x - SpriteParam[2]) / SpriteParam[4], (position.y - SpriteParam[3]) / SpriteParam[5]) * TexSize
+        if SpriteParam[i * 6 + 1] >= 0 && SpriteParam[i * 6 + 1] < squaredEuclidean && position.x > SpriteParam[i * 6 +2] && position.x < SpriteParam[i * 6 +2] + SpriteParam[i * 6 +4] && position.y > SpriteParam[i * 6 +3] && position.y < SpriteParam[i * 6 +3] + SpriteParam[i * 6 +5] {
+            texPos := vec2((position.x - SpriteParam[i * 6 +2]) / SpriteParam[i * 6 +4], (position.y - SpriteParam[i * 6 +3]) / SpriteParam[i * 6 +5]) * TexSize
         
             texOrigin, _ := imageSrcRegionOnTexture()
             //s はテクスチャ上のimageSrc上の座標　単位テクセル

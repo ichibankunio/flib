@@ -93,7 +93,6 @@ func (w *World) NewSprite(pos vec2.Vec2, texID int) {
 
 	
 	}
-	println(w.spriteRenderParam)
 }
 
 func (w *World) NewTopView() {
