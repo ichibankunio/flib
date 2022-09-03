@@ -208,6 +208,8 @@ func (w *World) sortSpriteRenderParam() {
 					}
 					println("")
 				}
+				w.spritePos[j], w.spritePos[j+1] = w.spritePos[j+1], w.spritePos[j]
+
 				println("sort performed", i, j)
 			}
 		}
