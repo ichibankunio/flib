@@ -49,35 +49,6 @@ func (w *World) Init(screenWidth, screenHeight float64) {
 
 	w.texSize = 64
 
-	// w.floorTexture = ebiten.NewImage(int(screenWidth), int(screenHeight))
-	// op := &ebiten.DrawImageOptions{}
-	// w.floorTexture.DrawImage(images[IMG_GROUND], op)
-
-	// for i, t := range floorTextures {
-	// 	op := &ebiten.DrawImageOptions{}
-	// 	op.GeoM.Translate(float64((i%(int(screenWidth)/w.texSize))*w.texSize), float64((i/(int(screenWidth)/w.texSize))*w.texSize))
-
-	// 	w.floorTexture.DrawImage(t, op)
-	// }
-
-	// w.wallTexture = ebiten.NewImage(int(screenWidth), int(screenHeight))
-	// // w.wallTexture.Fill(color.RGBA{255, 0, 0, 255})
-	// // op := &ebiten.DrawImageOptions{}
-	// // w.wallTexture.DrawImage(images[IMG_CITY], op)
-	// for i, t := range wallTextures {
-	// 	op := &ebiten.DrawImageOptions{}
-	// 	op.GeoM.Translate(float64((i%(int(screenWidth)/w.texSize))*w.texSize), float64((i/(int(screenWidth)/w.texSize))*w.texSize))
-	// 	w.wallTexture.DrawImage(t, op)
-	// }
-
-	// w.spriteTexture = ebiten.NewImage(int(screenWidth), int(screenHeight))
-	// // w.wallTexture.Fill(color.RGBA{255, 0, 0, 255})
-	// // op := &ebiten.DrawImageOptions{}
-	// w.spriteTexture.DrawImage(images[IMG_POLE], op)
-
-	// ebitenutil.DrawLine(w.wallTexture, float64(w.texSize), 0, float64(w.texSize), float64(w.texSize), color.RGBA{0, 0, 255, 255})
-	// op.GeoM.Translate(float64(images[IMG_WALL].Bounds().Dx()), 0)
-	// w.wallTexture.DrawImage(images[IMG_WALL], op)
 
 }
 
