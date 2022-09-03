@@ -1,7 +1,6 @@
 package raycast
 
 import (
-	"fmt"
 	"image/color"
 	"math"
 
@@ -191,7 +190,7 @@ func (w *World) sortSpriteRenderParam() {
 		for j := 0; j < len(w.SpritePos)-i-1; j++ {
 			if w.SpriteRenderParam[6*j+1] > w.SpriteRenderParam[6*(j+1)+1] {
 				for k := 0; k < 6; k++ {
-					fmt.Printf("%d, %d\n", 6*j+k, 6*(j+1)+k)
+					// fmt.Printf("%d, %d\n", 6*j+k, 6*(j+1)+k)
 
 					// tmp := w.SpriteRenderParam[6*j+k]
 					w.SpriteRenderParam[6*j+k], w.SpriteRenderParam[6*(j+1)+k] = w.SpriteRenderParam[6*(j+1)+k], w.SpriteRenderParam[6*j+k]
