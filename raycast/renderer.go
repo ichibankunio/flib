@@ -1,6 +1,7 @@
 package raycast
 
 import (
+	"fmt"
 	"image/color"
 	"math"
 
@@ -174,17 +175,22 @@ func (r *Renderer) calcSpriteRenderPos() {
 	}
 
 	r.Wld.sortSpriteRenderParam()
+
+	for i := 0; i < len(r.Wld.spriteRenderParam); i++ {
+		fmt.Printf("%f,", r.Wld.spriteRenderParam[i])
+	}
+	println("")
 }
 
 func (w *World) sortSpriteRenderParam() {
 	if len(w.spritePos) < 2 {
-		return 
+		return
 	}
 
 	for i := 0; i < len(w.spritePos); i++ {
 		for j := 0; j < len(w.spritePos)-i; j++ {
 			if w.spriteRenderParam[6*j+1] > w.spriteRenderParam[6*(j+1)+1] {
-				
+
 				for k := 0; k < 6; k++ {
 					tmp := w.spriteRenderParam[6*j+k]
 					w.spriteRenderParam[6*j+k] = w.spriteRenderParam[6*(j+1)+k]
