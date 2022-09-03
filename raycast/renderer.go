@@ -189,8 +189,8 @@ func (w *World) sortSpriteRenderParam() {
 
 	for i := 0; i < len(w.spritePos); i++ {
 		for j := 0; j < len(w.spritePos)-i; j++ {
-			if w.spriteRenderParam[6*j] < 0 {
-				return
+			if w.spriteRenderParam[6*j] < 0 || w.spriteRenderParam[6*(j+1)] < 0 {
+				continue
 			}
 
 			fmt.Printf("%f, %f\n", w.spriteRenderParam[6*j+1], w.spriteRenderParam[6*(j+1)+1])
