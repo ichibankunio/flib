@@ -172,11 +172,15 @@ func (r *Renderer) calcSpriteRenderPos() {
 		r.Wld.spriteRenderParam[6*i+4] = float32(spriteSize.X)
 		r.Wld.spriteRenderParam[6*i+5] = float32(spriteSize.Y)
 	}
-	
+
 	r.Wld.sortSpriteRenderParam()
 }
 
 func (w *World) sortSpriteRenderParam() {
+	if len(w.spritePos) < 2 {
+		return 
+	}
+	
 	for i := 0; i < len(w.spritePos); i++ {
 		for j := 0; j < len(w.spritePos)-i; j++ {
 			if w.spriteRenderParam[6*j+1] > w.spriteRenderParam[6*(j+1)+1] {
