@@ -189,17 +189,18 @@ func (w *World) sortSpriteRenderParam() {
 
 	for i := 0; i < len(w.spritePos)-1; i++ {
 		for j := 0; j < len(w.spritePos)-i-1; j++ {
-			if w.spriteRenderParam[6*j] < 0 || w.spriteRenderParam[6*(j+1)] < 0 {
-				break
-			}
+			// if w.spriteRenderParam[6*j] < 0 || w.spriteRenderParam[6*(j+1)] < 0 {
+			// 	break
+			// }
 
 			fmt.Printf("%f, %f\n", w.spriteRenderParam[6*j+1], w.spriteRenderParam[6*(j+1)+1])
 			fmt.Printf("%f, %f\n", w.spriteRenderParam[6*j], w.spriteRenderParam[6*(j+1)])
 			if w.spriteRenderParam[6*j+1] > w.spriteRenderParam[6*(j+1)+1] {
 				for k := 0; k < 6; k++ {
-					tmp := w.spriteRenderParam[6*j+k]
-					w.spriteRenderParam[6*j+k] = w.spriteRenderParam[6*(j+1)+k]
-					w.spriteRenderParam[6*(j+1)+k] = tmp
+					// tmp := w.spriteRenderParam[6*j+k]
+					w.spriteRenderParam[6*j+k], w.spriteRenderParam[6*(j+1)+k] = w.spriteRenderParam[6*(j+1)+k], w.spriteRenderParam[6*j+k]
+					// w.spriteRenderParam[6*j+k] = w.spriteRenderParam[6*(j+1)+k]
+					// w.spriteRenderParam[6*(j+1)+k] = tmp
 				}
 				println("sort performed", i, j)
 			}
