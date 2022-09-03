@@ -199,6 +199,7 @@ func (w *World) sortSpriteRenderParam() {
 					w.spriteRenderParam[6*j+k] = w.spriteRenderParam[6*(j+1)+k]
 					w.spriteRenderParam[6*(j+1)+k] = tmp
 				}
+				println("sort performed")
 			}
 		}
 	}
