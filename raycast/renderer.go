@@ -184,10 +184,11 @@ func (w *World) sortSpriteRenderParam() {
 	for i := 0; i < len(w.spritePos); i++ {
 		for j := 0; j < len(w.spritePos)-i; j++ {
 			if w.spriteRenderParam[6*j+1] > w.spriteRenderParam[6*(j+1)+1] {
-				tmp := w.spriteRenderParam[6*j:6*j+6]
+				
 				for k := 0; k < 6; k++ {
+					tmp := w.spriteRenderParam[6*j+k]
 					w.spriteRenderParam[6*j+k] = w.spriteRenderParam[6*(j+1)+k]
-					w.spriteRenderParam[6*(j+1)+k] = tmp[k]
+					w.spriteRenderParam[6*(j+1)+k] = tmp
 				}
 			}
 		}
