@@ -132,7 +132,7 @@ func (r *Renderer) renderWall(screen *ebiten.Image) {
 		"WorldSize":   []float32{float32(r.Wld.width), float32(r.Wld.height)},
 		"Level":       r.Wld.level[0],
 		"FloorLevel":  r.Wld.level[1],
-		"SpriteParam": r.Wld.spriteRenderParam,
+		"SpriteParam": r.Wld.SpriteRenderParam,
 	}
 
 	op.Images[0] = r.wallTexture
@@ -144,7 +144,7 @@ func (r *Renderer) renderWall(screen *ebiten.Image) {
 
 func (r *Renderer) calcSpriteRenderPos() {
 	invDet := 1.0 / (r.Cam.plane.X*r.Cam.dir.Y - r.Cam.dir.X*r.Cam.plane.Y) // 1/(ad-bc)
-	for i, pos := range r.Wld.spritePos {
+	for i, pos := range r.Wld.SpritePos {
 		relPos := pos.Sub(r.Cam.pos).Scale(1.0 / float64(r.Wld.gridSize))
 		transPos := vec2.New(r.Cam.dir.Y*relPos.X-r.Cam.dir.X*relPos.Y, -r.Cam.plane.Y*relPos.X+r.Cam.plane.X*relPos.Y).Scale(invDet)
 		screenX := (r.screenWidth / 2) * (1.0 - transPos.X/transPos.Y)
@@ -160,18 +160,18 @@ func (r *Renderer) calcSpriteRenderPos() {
 
 		if transPos.Y > 0 {
 			// s.wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength()*math.Min(SCREEN_HEIGHT/SCREEN_WIDTH*3/4, SCREEN_WIDTH/SCREEN_HEIGHT*4/3))
-			r.Wld.spriteRenderParam[6*i+1] = float32(relPos.SquaredLength())
+			r.Wld.SpriteRenderParam[6*i+1] = float32(relPos.SquaredLength())
 			// r.Wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength() *SCREEN_HEIGHT/SCREEN_HEIGHT*3/4)
 		} else {
-			r.Wld.spriteRenderParam[6*i+1] = float32(-1)
+			r.Wld.SpriteRenderParam[6*i+1] = float32(-1)
 		}
 
 		// fmt.Printf("%f, %f, %f, %f\n", drawStart, spriteSize, relPos.SquaredLength(), transPos.Y)
 
-		r.Wld.spriteRenderParam[6*i+2] = float32(drawStart.X)
-		r.Wld.spriteRenderParam[6*i+3] = float32(drawStart.Y)
-		r.Wld.spriteRenderParam[6*i+4] = float32(spriteSize.X)
-		r.Wld.spriteRenderParam[6*i+5] = float32(spriteSize.Y)
+		r.Wld.SpriteRenderParam[6*i+2] = float32(drawStart.X)
+		r.Wld.SpriteRenderParam[6*i+3] = float32(drawStart.Y)
+		r.Wld.SpriteRenderParam[6*i+4] = float32(spriteSize.X)
+		r.Wld.SpriteRenderParam[6*i+5] = float32(spriteSize.Y)
 	}
 
 	r.Wld.sortSpriteRenderParam()
@@ -183,22 +183,22 @@ func (r *Renderer) calcSpriteRenderPos() {
 }
 
 func (w *World) sortSpriteRenderParam() {
-	if len(w.spritePos) < 2 {
+	if len(w.SpritePos) < 2 {
 		return
 	}
 
-	for i := 0; i < len(w.spritePos)-1; i++ {
-		for j := 0; j < len(w.spritePos)-i-1; j++ {
-			if w.spriteRenderParam[6*j+1] > w.spriteRenderParam[6*(j+1)+1] {
+	for i := 0; i < len(w.SpritePos)-1; i++ {
+		for j := 0; j < len(w.SpritePos)-i-1; j++ {
+			if w.SpriteRenderParam[6*j+1] > w.SpriteRenderParam[6*(j+1)+1] {
 				for k := 0; k < 6; k++ {
 					fmt.Printf("%d, %d\n", 6*j+k, 6*(j+1)+k)
 
-					// tmp := w.spriteRenderParam[6*j+k]
-					w.spriteRenderParam[6*j+k], w.spriteRenderParam[6*(j+1)+k] = w.spriteRenderParam[6*(j+1)+k], w.spriteRenderParam[6*j+k]
-					// w.spriteRenderParam[6*j+k] = w.spriteRenderParam[6*(j+1)+k]
-					// w.spriteRenderParam[6*(j+1)+k] = tmp
+					// tmp := w.SpriteRenderParam[6*j+k]
+					w.SpriteRenderParam[6*j+k], w.SpriteRenderParam[6*(j+1)+k] = w.SpriteRenderParam[6*(j+1)+k], w.SpriteRenderParam[6*j+k]
+					// w.SpriteRenderParam[6*j+k] = w.SpriteRenderParam[6*(j+1)+k]
+					// w.SpriteRenderParam[6*(j+1)+k] = tmp
 				}
-				w.spritePos[j], w.spritePos[j+1] = w.spritePos[j+1], w.spritePos[j]
+				w.SpritePos[j], w.SpritePos[j+1] = w.SpritePos[j+1], w.SpritePos[j]
 
 			}
 		}
