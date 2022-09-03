@@ -90,8 +90,10 @@ func (w *World) NewSprite(pos vec2.Vec2, texID int) {
 		w.spriteRenderParam[6*(len(w.spritePos)-1)+3] = 0
 		w.spriteRenderParam[6*(len(w.spritePos)-1)+4] = 0
 		w.spriteRenderParam[6*(len(w.spritePos)-1)+5] = 0
-		w.spriteRenderParam[6*(len(w.spritePos)-1)+6] = 0
+
+	
 	}
+	println(w.spriteRenderParam)
 }
 
 func (w *World) NewTopView() {
