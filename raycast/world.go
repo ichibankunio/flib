@@ -27,8 +27,16 @@ type World struct {
 	width  int
 	height int
 
-	SpritePos         []vec2.Vec2
+	// SpritePos         []vec2.Vec2
 	SpriteRenderParam []float32
+
+	Sprites []*Sprite
+}
+
+type Sprite struct {
+	Pos   vec2.Vec2
+	ID    int
+	TexID int
 }
 
 func (w *World) Init(screenWidth, screenHeight float64) {
@@ -49,20 +57,35 @@ func (w *World) Init(screenWidth, screenHeight float64) {
 
 	w.texSize = 64
 
-
 }
 
 func (w *World) NewSprite(pos vec2.Vec2, texID int) {
-	if len(w.SpritePos) < 10 {
-		w.SpritePos = append(w.SpritePos, pos)
-		w.SpriteRenderParam[6*(len(w.SpritePos)-1)] = float32(texID)
-		w.SpriteRenderParam[6*(len(w.SpritePos)-1)+1] = 0
-		w.SpriteRenderParam[6*(len(w.SpritePos)-1)+2] = 0
-		w.SpriteRenderParam[6*(len(w.SpritePos)-1)+3] = 0
-		w.SpriteRenderParam[6*(len(w.SpritePos)-1)+4] = 0
-		w.SpriteRenderParam[6*(len(w.SpritePos)-1)+5] = 0
+	if len(w.Sprites) < 10 {
+		w.Sprites = append(w.Sprites, &Sprite{
+			Pos:   pos,
+			ID:    len(w.Sprites),
+			TexID: texID,
+		})
+
+		w.SpriteRenderParam[6*(len(w.Sprites)-1)] = float32(texID)
+		w.SpriteRenderParam[6*(len(w.Sprites)-1)+1] = 0
+		w.SpriteRenderParam[6*(len(w.Sprites)-1)+2] = 0
+		w.SpriteRenderParam[6*(len(w.Sprites)-1)+3] = 0
+		w.SpriteRenderParam[6*(len(w.Sprites)-1)+4] = 0
+		w.SpriteRenderParam[6*(len(w.Sprites)-1)+5] = 0
 
 	}
+
+	// if len(w.SpritePos) < 10 {
+	// 	w.SpritePos = append(w.SpritePos, pos)
+	// 	w.SpriteRenderParam[6*(len(w.SpritePos)-1)] = float32(texID)
+	// 	w.SpriteRenderParam[6*(len(w.SpritePos)-1)+1] = 0
+	// 	w.SpriteRenderParam[6*(len(w.SpritePos)-1)+2] = 0
+	// 	w.SpriteRenderParam[6*(len(w.SpritePos)-1)+3] = 0
+	// 	w.SpriteRenderParam[6*(len(w.SpritePos)-1)+4] = 0
+	// 	w.SpriteRenderParam[6*(len(w.SpritePos)-1)+5] = 0
+
+	// }
 }
 
 func (w *World) NewTopView() {
