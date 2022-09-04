@@ -131,20 +131,6 @@ func Fragment(position vec4, texCoord vec2, color vec4) vec4 {
             }
         }
     }
-/*
-    if SpriteParam[0] >= 0 && SpriteParam[0] < squaredEuclidean && position.x > SpriteParam[1] && position.x < SpriteParam[1] + SpriteParam[3] && position.y > SpriteParam[2] && position.y < SpriteParam[2] + SpriteParam[4] {
-        // return vec4(0.5)
-        texPos := vec2((position.x - SpriteParam[1]) / SpriteParam[3], (position.y - SpriteParam[2]) / SpriteParam[4]) * TexSize
-        
-        texOrigin, _ := imageSrcRegionOnTexture()
-        //s はテクスチャ上のimageSrc上の座標　単位テクセル
-        //texOrigin + s/imageSrcTextureSize()はimageSrcがあるテクスチャのどの座標（単位ピクセル）のRGBAをとるか
-        clr := imageSrc2UnsafeAt(texOrigin + texPos/imageSrcTextureSize())
-        if clr.a > 0 {
-            return clr
-        }
-    }
-*/
 
     wallX := fract(side * (Pos.x + perpWallDist*rayDir.x) + (1.0 - side) * (Pos.y + perpWallDist*rayDir.y))
     // if side == 0 {
@@ -273,6 +259,11 @@ func Fragment(position vec4, texCoord vec2, color vec4) vec4 {
 
     return vec4(0.0)
 
+}
+
+func DrawCards() vec4 {
+    
+    return vec4(0.5)
 }
 
 

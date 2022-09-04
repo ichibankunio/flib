@@ -24,13 +24,15 @@ type Renderer struct {
 
 	shader *ebiten.Shader
 
+	textures [4]*ebiten.Image
+
 	floorTexture  *ebiten.Image
 	spriteTexture *ebiten.Image
 	wallTexture   *ebiten.Image
 	texSize       int
 }
 
-func (r *Renderer) Init(screenWidth, screenHeight float64, wallTextures []*ebiten.Image, floorTextures []*ebiten.Image, spriteTextures []*ebiten.Image, texSize int) {
+func (r *Renderer) Init(screenWidth, screenHeight float64, texSize int) {
 	r.Cam = &Camera{}
 	r.Cam.Init(screenWidth, screenHeight)
 
@@ -39,6 +41,8 @@ func (r *Renderer) Init(screenWidth, screenHeight float64, wallTextures []*ebite
 
 	r.Wld = &World{}
 	r.Wld.Init(screenWidth, screenHeight)
+	
+	r.texSize = texSize
 
 	r.screenWidth = screenWidth
 	r.screenHeight = screenHeight
@@ -49,30 +53,48 @@ func (r *Renderer) Init(screenWidth, screenHeight float64, wallTextures []*ebite
 		panic(err)
 	}
 
-	r.floorTexture = ebiten.NewImage(int(r.screenWidth), int(r.screenHeight))
-	for i, t := range floorTextures {
-		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64((i%(int(screenWidth)/texSize))*texSize), float64((i/(int(screenWidth)/texSize))*texSize))
+	// r.textures = textures
 
-		r.floorTexture.DrawImage(t, op)
-	}
+	// r.floorTexture = ebiten.NewImage(int(r.screenWidth), int(r.screenHeight))
+	// for i, t := range floorTextures {
+	// 	op := &ebiten.DrawImageOptions{}
+	// 	op.GeoM.Translate(float64((i%(int(screenWidth)/texSize))*texSize), float64((i/(int(screenWidth)/texSize))*texSize))
 
-	r.wallTexture = ebiten.NewImage(int(screenWidth), int(screenHeight))
-	for i, t := range wallTextures {
-		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64((i%(int(screenWidth)/texSize))*texSize), float64((i/(int(screenHeight)/texSize))*texSize))
-		r.wallTexture.DrawImage(t, op)
-	}
+	// 	r.floorTexture.DrawImage(t, op)
+	// }
 
-	r.spriteTexture = ebiten.NewImage(int(screenWidth), int(screenHeight))
-	for i, t := range spriteTextures {
-		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64((i%(int(screenWidth)/texSize))*texSize), float64((i/(int(screenHeight)/texSize))*texSize))
-		r.spriteTexture.DrawImage(t, op)
-	}
+	// r.wallTexture = ebiten.NewImage(int(screenWidth), int(screenHeight))
+	// for i, t := range wallTextures {
+	// 	op := &ebiten.DrawImageOptions{}
+	// 	op.GeoM.Translate(float64((i%(int(screenWidth)/texSize))*texSize), float64((i/(int(screenHeight)/texSize))*texSize))
+	// 	r.wallTexture.DrawImage(t, op)
+	// }
+
+	// r.spriteTexture = ebiten.NewImage(int(screenWidth), int(screenHeight))
+	// for i, t := range spriteTextures {
+	// 	op := &ebiten.DrawImageOptions{}
+	// 	op.GeoM.Translate(float64((i%(int(screenWidth)/texSize))*texSize), float64((i/(int(screenHeight)/texSize))*texSize))
+	// 	r.spriteTexture.DrawImage(t, op)
+	// }
 
 }
 
+func (r *Renderer) SetTextures(textures [4]*ebiten.Image) {
+	r.textures = textures
+}
+
+func (r *Renderer) NewTextureSheet(src []*ebiten.Image) *ebiten.Image {
+	sheet := ebiten.NewImage(int(r.screenWidth), int(r.screenHeight))
+	for i, s := range src {
+		op := &ebiten.DrawImageOptions{}
+		op.GeoM.Translate(float64((i%(int(r.screenWidth)/r.texSize))*r.texSize), float64((i/(int(r.screenWidth)/r.texSize))*r.texSize))
+
+		sheet.DrawImage(s, op)
+	}
+
+	return sheet
+}
+ 
 func (r *Renderer) SetShader(b []byte) error {
 	var err error
 	r.shader, err = ebiten.NewShader(b)
@@ -134,16 +156,17 @@ func (r *Renderer) renderWall(screen *ebiten.Image) {
 		"SpriteParam": r.Wld.SpriteRenderParam,
 	}
 
-	op.Images[0] = r.wallTexture
-	op.Images[1] = r.floorTexture
-	op.Images[2] = r.spriteTexture
+	op.Images[0] = r.textures[0]
+	op.Images[1] = r.textures[1]
+	op.Images[2] = r.textures[2]
+	op.Images[3] = r.textures[3]
 	screen.DrawRectShader(int(r.screenWidth), int(r.screenHeight), r.shader, op)
 
 }
 
 func (r *Renderer) calcSpriteRenderPos() {
 	invDet := 1.0 / (r.Cam.plane.X*r.Cam.dir.Y - r.Cam.dir.X*r.Cam.plane.Y) // 1/(ad-bc)
-	for _, spr := range r.Wld.Sprites {
+	for i, spr := range r.Wld.Sprites {
 		relPos := spr.Pos.Sub(r.Cam.pos).Scale(1.0 / float64(r.Wld.gridSize))
 		transPos := vec2.New(r.Cam.dir.Y*relPos.X-r.Cam.dir.X*relPos.Y, -r.Cam.plane.Y*relPos.X+r.Cam.plane.X*relPos.Y).Scale(invDet)
 		screenX := (r.screenWidth / 2) * (1.0 - transPos.X/transPos.Y)
@@ -159,66 +182,25 @@ func (r *Renderer) calcSpriteRenderPos() {
 
 		if transPos.Y > 0 {
 			// s.wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength()*math.Min(SCREEN_HEIGHT/SCREEN_WIDTH*3/4, SCREEN_WIDTH/SCREEN_HEIGHT*4/3))
-			r.Wld.SpriteRenderParam[6*spr.ID+1] = float32(relPos.SquaredLength())
+			r.Wld.SpriteRenderParam[6*i+1] = float32(relPos.SquaredLength())
 			// r.Wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength() *SCREEN_HEIGHT/SCREEN_HEIGHT*3/4)
 		} else {
-			r.Wld.SpriteRenderParam[6*spr.ID+1] = float32(-1)
+			r.Wld.SpriteRenderParam[6*i+1] = float32(-1)
 		}
 
-
-		r.Wld.SpriteRenderParam[6*spr.ID+2] = float32(drawStart.X)
-		r.Wld.SpriteRenderParam[6*spr.ID+3] = float32(drawStart.Y)
-		r.Wld.SpriteRenderParam[6*spr.ID+4] = float32(spriteSize.X)
-		r.Wld.SpriteRenderParam[6*spr.ID+5] = float32(spriteSize.Y)
+		r.Wld.SpriteRenderParam[6*i+2] = float32(drawStart.X)
+		r.Wld.SpriteRenderParam[6*i+3] = float32(drawStart.Y)
+		r.Wld.SpriteRenderParam[6*i+4] = float32(spriteSize.X)
+		r.Wld.SpriteRenderParam[6*i+5] = float32(spriteSize.Y)
 	}
 
 	r.Wld.sortSpriteRenderParam()
 
 	// for i := 0; i < 24; i++ {
-	// 	fmt.Printf("%.2f,", r.Wld.spriteRenderParam[i])
+	// 	fmt.Printf("%.2f,", r.Wld.SpriteRenderParam[i])
 	// }
 	// println("")
 }
-
-// func (r *Renderer) calcSpriteRenderPos2() {
-// 	invDet := 1.0 / (r.Cam.plane.X*r.Cam.dir.Y - r.Cam.dir.X*r.Cam.plane.Y) // 1/(ad-bc)
-// 	for i, pos := range r.Wld.SpritePos {
-// 		relPos := pos.Sub(r.Cam.pos).Scale(1.0 / float64(r.Wld.gridSize))
-// 		transPos := vec2.New(r.Cam.dir.Y*relPos.X-r.Cam.dir.X*relPos.Y, -r.Cam.plane.Y*relPos.X+r.Cam.plane.X*relPos.Y).Scale(invDet)
-// 		screenX := (r.screenWidth / 2) * (1.0 - transPos.X/transPos.Y)
-
-// 		//calculate height of the sprite on screen
-// 		spriteSize := vec2.New(math.Abs(r.screenHeight/transPos.Y), math.Abs(r.screenHeight/transPos.Y))
-// 		// spriteHeight := math.Abs(SCREEN_HEIGHT / transPos.Y) //using 'transformY' instead of the real distance prevents fisheye
-// 		// spriteWidth := math.Abs(SCREEN_HEIGHT / transPos.Y)
-
-// 		//calculate lowest and highest pixel to fill in current stripe
-// 		drawStart := vec2.New(-spriteSize.X/2+screenX, -spriteSize.Y/2+r.screenHeight/2)
-// 		// drawEnd := vec2.New(spriteWidth/2+screenX, spriteHeight/2+SCREEN_HEIGHT/2)
-
-// 		if transPos.Y > 0 {
-// 			// s.wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength()*math.Min(SCREEN_HEIGHT/SCREEN_WIDTH*3/4, SCREEN_WIDTH/SCREEN_HEIGHT*4/3))
-// 			r.Wld.SpriteRenderParam[6*i+1] = float32(relPos.SquaredLength())
-// 			// r.Wld.spriteRenderParam[5*i] = float32(relPos.SquaredLength() *SCREEN_HEIGHT/SCREEN_HEIGHT*3/4)
-// 		} else {
-// 			r.Wld.SpriteRenderParam[6*i+1] = float32(-1)
-// 		}
-
-// 		// fmt.Printf("%f, %f, %f, %f\n", drawStart, spriteSize, relPos.SquaredLength(), transPos.Y)
-
-// 		r.Wld.SpriteRenderParam[6*i+2] = float32(drawStart.X)
-// 		r.Wld.SpriteRenderParam[6*i+3] = float32(drawStart.Y)
-// 		r.Wld.SpriteRenderParam[6*i+4] = float32(spriteSize.X)
-// 		r.Wld.SpriteRenderParam[6*i+5] = float32(spriteSize.Y)
-// 	}
-
-// 	r.Wld.sortSpriteRenderParam()
-
-// 	// for i := 0; i < 24; i++ {
-// 	// 	fmt.Printf("%.2f,", r.Wld.spriteRenderParam[i])
-// 	// }
-// 	// println("")
-// }
 
 func (w *World) sortSpriteRenderParam() {
 	if len(w.Sprites) < 2 {
