@@ -252,7 +252,8 @@ func Fragment(position vec4, texCoord vec2, color vec4) vec4 {
         texOrigin, _ := imageSrcRegionOnTexture()
         //s はテクスチャ上のimageSrc上の座標　単位テクセル
         //texOrigin + s/imageSrcTextureSize()はimageSrcがあるテクスチャのどの座標（単位ピクセル）のRGBAをとるか
-        return imageSrc0UnsafeAt(texOrigin + texPos/imageSrcTextureSize()) - vec4(0.2, 0.2, 0.2, 0)
+        // return imageSrc0UnsafeAt(texOrigin + texPos/imageSrcTextureSize()) - vec4(0.2, 0.2, 0.2, 0)
+        return imageSrc0UnsafeAt(texOrigin + texPos/imageSrcTextureSize())
 
     }
     

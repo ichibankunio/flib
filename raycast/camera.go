@@ -28,8 +28,12 @@ type Camera struct {
 	v float64
 }
 
+func (c *Camera) SetPos(pos vec2.Vec2) {
+	c.pos = pos
+}
+
 func (c *Camera) Init(screenWidth, screenHeight float64) {
-	c.pos = vec2.New(360, 360)
+	c.pos = vec2.New(64*10*3/4, 64*10/2)
 	c.dir = vec2.New(-1, 0)
 	c.plane = vec2.New(0, 0.66*screenWidth/screenHeight*3/4)
 	// c.plane = vec2.New(0, 0.66 * SCREEN_WIDTH / 960 * 720 / SCREEN_HEIGHT)

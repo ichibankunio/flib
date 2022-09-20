@@ -14,7 +14,7 @@ type Stick struct {
 	// pos     vec2.Vec2
 	visible  [2]bool
 	img      *ebiten.Image
-	input    [2]stickDirection
+	Input    [2]stickDirection
 	touchIDs [2]ebiten.TouchID
 	pos      [2]vec2.Vec2
 	isMobile bool
@@ -42,7 +42,7 @@ func (s *Stick) Init(screenWidth, screenHeight float64) {
 	}
 
 	s.visible = [2]bool{false, false}
-	s.input = [2]stickDirection{
+	s.Input = [2]stickDirection{
 		STICK_NONE,
 		STICK_NONE,
 	}
@@ -50,7 +50,7 @@ func (s *Stick) Init(screenWidth, screenHeight float64) {
 	s.isMobile = false
 
 	s.img = ebiten.NewImage(int(s.screenHeight/10), int(s.screenHeight/10))
-	ebitenutil.DrawCircle(s.img, float64(s.img.Bounds().Dx()/2), float64(s.img.Bounds().Dy()/2), float64(s.img.Bounds().Dx()/2), color.RGBA{200, 200, 200, 150})
+	ebitenutil.DrawCircle(s.img, float64(s.img.Bounds().Dx()/2), float64(s.img.Bounds().Dy()/2), float64(s.img.Bounds().Dx()/2), color.RGBA{200, 200, 200, 200})
 	// s.img.Fill(color.RGBA{200, 200, 200, 50})
 }
 
@@ -103,24 +103,24 @@ func (s *Stick) update() {
 		current := vec2.New(float64(x), float64(y))
 		rel := current.Sub(s.pos[0])
 		if rel.X > 0 && math.Abs(rel.Y/rel.X) < 0.8 {
-			s.input[0] = STICK_RIGHT
+			s.Input[0] = STICK_RIGHT
 		} else if rel.X < 0 && math.Abs(rel.Y/rel.X) < 0.8 {
-			s.input[0] = STICK_LEFT
+			s.Input[0] = STICK_LEFT
 		} else if rel.Y > 0 && math.Abs(rel.X/rel.Y) < 0.8 {
-			s.input[0] = STICK_DOWN
+			s.Input[0] = STICK_DOWN
 		} else if rel.Y < 0 && math.Abs(rel.X/rel.Y) < 0.8 {
-			s.input[0] = STICK_UP
+			s.Input[0] = STICK_UP
 		} else {
-			s.input[0] = STICK_NONE
+			s.Input[0] = STICK_NONE
 		}
 
 		if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
 			s.visible[0] = false
-			s.input[0] = STICK_NONE
+			s.Input[0] = STICK_NONE
 		}
 		if inpututil.IsTouchJustReleased(s.touchIDs[0]) {
 			s.visible[0] = false
-			s.input[0] = STICK_NONE
+			s.Input[0] = STICK_NONE
 			s.touchIDs[0] = -1
 		}
 	}
@@ -133,21 +133,21 @@ func (s *Stick) update() {
 		current := vec2.New(float64(x), float64(y))
 		rel := current.Sub(s.pos[1])
 		if rel.X > 0 && math.Abs(rel.Y/rel.X) < 0.8 {
-			s.input[1] = STICK_RIGHT
+			s.Input[1] = STICK_RIGHT
 		} else if rel.X < 0 && math.Abs(rel.Y/rel.X) < 0.8 {
-			s.input[1] = STICK_LEFT
+			s.Input[1] = STICK_LEFT
 		} else {
-			s.input[1] = STICK_NONE
+			s.Input[1] = STICK_NONE
 		}
 
 		if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
 			s.visible[1] = false
-			s.input[1] = STICK_NONE
+			s.Input[1] = STICK_NONE
 
 		}
 		if inpututil.IsTouchJustReleased(s.touchIDs[1]) {
 			s.visible[1] = false
-			s.input[1] = STICK_NONE
+			s.Input[1] = STICK_NONE
 			s.touchIDs[1] = -1
 		}
 	}

@@ -1,13 +1,11 @@
 package raycast
 
 import (
-	"image/color"
 	"math"
 
 	_ "embed"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/ichibankunio/flib/vec2"
 )
 
@@ -41,7 +39,7 @@ func (r *Renderer) Init(screenWidth, screenHeight float64, texSize int) {
 
 	r.Wld = &World{}
 	r.Wld.Init(screenWidth, screenHeight)
-	
+
 	r.texSize = texSize
 
 	r.screenWidth = screenWidth
@@ -94,7 +92,7 @@ func (r *Renderer) NewTextureSheet(src []*ebiten.Image) *ebiten.Image {
 
 	return sheet
 }
- 
+
 func (r *Renderer) SetShader(b []byte) error {
 	var err error
 	r.shader, err = ebiten.NewShader(b)
@@ -128,16 +126,20 @@ func (r *Renderer) Update() {
 func (r *Renderer) Draw(screen *ebiten.Image) {
 	r.renderWall(screen)
 
-	r.Wld.DrawTopView(screen)
+	// r.Wld.DrawTopView(screen)
 
-	ebitenutil.DrawRect(screen, r.Cam.pos.X/2-2, r.Cam.pos.Y/2-2, 4, 4, color.RGBA{255, 0, 0, 255})
+	// ebitenutil.DrawRect(screen, r.Cam.pos.X/2-2, r.Cam.pos.Y/2-2, 4, 4, color.RGBA{255, 0, 0, 255})
 
-	ebitenutil.DrawLine(screen, r.Cam.pos.X/2, r.Cam.pos.Y/2, r.Cam.pos.X/2+r.Cam.dir.X*200, r.Cam.pos.Y/2+r.Cam.dir.Y*200, color.RGBA{255, 0, 0, 255})
+	// ebitenutil.DrawLine(screen, r.Cam.pos.X/2, r.Cam.pos.Y/2, r.Cam.pos.X/2+r.Cam.dir.X*200, r.Cam.pos.Y/2+r.Cam.dir.Y*200, color.RGBA{255, 0, 0, 255})
 
 	// s.fps.Draw(screen)
 	// s.debug.Draw(screen)
 
 	r.Stk.Draw(screen)
+}
+
+func (r *Renderer) DrawTopView(screen *ebiten.Image) {
+	r.Wld.DrawTopView(screen)
 }
 
 func (r *Renderer) renderWall(screen *ebiten.Image) {
@@ -219,7 +221,6 @@ func (w *World) sortSpriteRenderParam() {
 					// w.SpriteRenderParam[6*(j+1)+k] = tmp
 				}
 				w.Sprites[j], w.Sprites[j+1] = w.Sprites[j+1], w.Sprites[j]
-
 			}
 		}
 	}
@@ -282,30 +283,30 @@ func (r *Renderer) castRay(dir, plane vec2.Vec2) float64 {
 
 func (r *Renderer) updateCamera() {
 	rotateV := 0.02
-	if ebiten.IsKeyPressed(ebiten.KeyRight) || ebiten.GamepadAxisValue(0, 3) > 0.3 || r.Stk.input[1] == STICK_RIGHT {
+	if ebiten.IsKeyPressed(ebiten.KeyRight) || ebiten.GamepadAxisValue(0, 3) > 0.3 || r.Stk.Input[1] == STICK_RIGHT {
 		r.Cam.dir = vec2.New(math.Cos(rotateV)*r.Cam.dir.X-math.Sin(rotateV)*r.Cam.dir.Y, math.Sin(rotateV)*r.Cam.dir.X+math.Cos(rotateV)*r.Cam.dir.Y)
 
 		r.Cam.plane = vec2.New(math.Cos(rotateV)*r.Cam.plane.X-math.Sin(rotateV)*r.Cam.plane.Y, math.Sin(rotateV)*r.Cam.plane.X+math.Cos(rotateV)*r.Cam.plane.Y)
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyLeft) || ebiten.GamepadAxisValue(0, 3) < -0.3 || r.Stk.input[1] == STICK_LEFT {
+	if ebiten.IsKeyPressed(ebiten.KeyLeft) || ebiten.GamepadAxisValue(0, 3) < -0.3 || r.Stk.Input[1] == STICK_LEFT {
 		r.Cam.dir = vec2.New(math.Cos(-rotateV)*r.Cam.dir.X-math.Sin(-rotateV)*r.Cam.dir.Y, math.Sin(-rotateV)*r.Cam.dir.X+math.Cos(-rotateV)*r.Cam.dir.Y)
 
 		r.Cam.plane = vec2.New(math.Cos(-rotateV)*r.Cam.plane.X-math.Sin(-rotateV)*r.Cam.plane.Y, math.Sin(-rotateV)*r.Cam.plane.X+math.Cos(-rotateV)*r.Cam.plane.Y)
 	}
 
-	if ebiten.IsKeyPressed(ebiten.KeyW) || ebiten.IsKeyPressed(ebiten.KeyUp) || ebiten.GamepadAxisValue(0, 1) < -0.1 || r.Stk.input[0] == STICK_UP {
+	if ebiten.IsKeyPressed(ebiten.KeyW) || ebiten.IsKeyPressed(ebiten.KeyUp) || ebiten.GamepadAxisValue(0, 1) < -0.1 || r.Stk.Input[0] == STICK_UP {
 		r.Cam.pos = r.Cam.pos.Add(r.collisionCheckedDelta(r.Cam.dir.Scale(r.Cam.v)))
 
 		// r.Cam.pos = r.GetValidPos(r.Cam.por.X + r.Cam.dir.X*v, r.Cam.por.Y + r.Cam.dir.Y*v)
-	} else if ebiten.IsKeyPressed(ebiten.KeyS) || ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.GamepadAxisValue(0, 1) > 0.1 || r.Stk.input[0] == STICK_DOWN {
+	} else if ebiten.IsKeyPressed(ebiten.KeyS) || ebiten.IsKeyPressed(ebiten.KeyDown) || ebiten.GamepadAxisValue(0, 1) > 0.1 || r.Stk.Input[0] == STICK_DOWN {
 
 		r.Cam.pos = r.Cam.pos.Add(r.collisionCheckedDelta(r.Cam.dir.Scale(-r.Cam.v)))
 
-	} else if ebiten.IsKeyPressed(ebiten.KeyD) || ebiten.GamepadAxisValue(0, 0) > 0.1 || r.Stk.input[0] == STICK_RIGHT {
+	} else if ebiten.IsKeyPressed(ebiten.KeyD) || ebiten.GamepadAxisValue(0, 0) > 0.1 || r.Stk.Input[0] == STICK_RIGHT {
 
 		r.Cam.pos = r.Cam.pos.Add(r.collisionCheckedDelta(r.Cam.plane.Scale(-r.Cam.v)))
 
-	} else if ebiten.IsKeyPressed(ebiten.KeyA) || ebiten.GamepadAxisValue(0, 0) < -0.1 || r.Stk.input[0] == STICK_LEFT {
+	} else if ebiten.IsKeyPressed(ebiten.KeyA) || ebiten.GamepadAxisValue(0, 0) < -0.1 || r.Stk.Input[0] == STICK_LEFT {
 
 		r.Cam.pos = r.Cam.pos.Add(r.collisionCheckedDelta(r.Cam.plane.Scale(r.Cam.v)))
 
