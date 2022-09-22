@@ -135,7 +135,7 @@ func (r *Renderer) Draw(screen *ebiten.Image) {
 	// s.fps.Draw(screen)
 	// s.debug.Draw(screen)
 
-	r.Stk.Draw(screen)
+	// r.Stk.Draw(screen)
 }
 
 func (r *Renderer) DrawTopView(screen *ebiten.Image) {
