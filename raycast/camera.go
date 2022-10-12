@@ -32,6 +32,10 @@ func (c *Camera) SetPos(pos vec2.Vec2) {
 	c.pos = pos
 }
 
+func (c *Camera) GetPos() vec2.Vec2 {
+	return c.pos
+}
+
 func (c *Camera) Init(screenWidth, screenHeight float64) {
 	c.pos = vec2.New(64*10*3/4, 64*10/2)
 	c.dir = vec2.New(-1, 0)

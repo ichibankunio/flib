@@ -9,7 +9,7 @@ import (
 type Scene interface {
 	Update(*Game) error
 	Draw(*ebiten.Image)
-	Start()
+	Start(*Game)
 	GetID() SceneID
 	GetStatus() int
 	Init(*Game)
@@ -46,7 +46,7 @@ func ShiftSceneWithFadeInOut(g *Game, shiftTo SceneID, duration int) {
 	g.transitionDuration = duration
 	g.transitionTick = NewTickF(1, false, -1, func(cc int, i []interface{}) bool {
 		if cc == duration/2 {
-			g.Scenes[shiftTo].Start()
+			g.Scenes[shiftTo].Start(g)
 			g.State = shiftTo
 
 		} else if cc == duration {

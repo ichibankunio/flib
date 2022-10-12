@@ -21,5 +21,15 @@ func (s *Storage) SetItem(key string, value interface{}) {
 }
 
 func (s *Storage) GetItem(key string) interface{} {
-	return s.Items[key].value
+	item, isThere := s.Items[key]
+	if isThere {
+		return item.value
+	}
+
+	return nil
+}
+
+func (s *Storage) IsThere(key string) bool {
+	_, isThere := s.Items[key]
+	return isThere
 }

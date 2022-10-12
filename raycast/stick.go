@@ -50,7 +50,7 @@ func (s *Stick) Init(screenWidth, screenHeight float64) {
 	s.isMobile = false
 
 	s.img = ebiten.NewImage(int(s.screenHeight/10), int(s.screenHeight/10))
-	ebitenutil.DrawCircle(s.img, float64(s.img.Bounds().Dx()/2), float64(s.img.Bounds().Dy()/2), float64(s.img.Bounds().Dx()/2), color.RGBA{200, 200, 200, 200})
+	ebitenutil.DrawCircle(s.img, float64(s.img.Bounds().Dx()/2), float64(s.img.Bounds().Dy()/2), float64(s.img.Bounds().Dx()/2), color.RGBA{200, 200, 200, 100})
 	// s.img.Fill(color.RGBA{200, 200, 200, 50})
 }
 
