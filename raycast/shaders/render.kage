@@ -3,45 +3,50 @@
 
 package main
 
-var ScreenSize vec2
+// var ScreenSize vec2
 var Pos vec2
 var Dir vec2
 var Plane vec2
 // var WorldSize vec2
-var TexSize float
-var Level [100]float
-var FloorLevel [100]float
+// var texSize float
+// var Level [100]float
+// var FloorLevel [100]float
 var SpriteParam [60]float
-
-// Map is generated from my own c++ code...
-func GetWallMap(x int, y int) float {
-    return Level[10*y+x]
-}
-
-func GetFloorMap(x int, y int) float {
-    return FloorLevel[10*y+x]
-}
 
 
 func Fragment(position vec4, texCoord vec2, color vec4) vec4 {
 
-    //transform sprite with the inverse camera matrix
-    // [ planeX   dirX ] -1                                       [ dirY      -dirX ]
-    // [               ]       =  1/(planeX*dirY-dirX*planeY) *   [                 ]
-    // [ planeY   dirY ]                                          [ -planeY  planeX ]
+    texSize := 64.0
+    screenSize := vec2(320, 240)
 
+    level := [100]float{
+        4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+        4, 0, 0, 0, 0, 0, 4, 0, 0, 4,
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+        4, 4, 0, 0, 0, 0, 0, 0, 4, 4,
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+        4, 0, 0, 0, 0, 0, 0, 0, 0, 4,
+        4, 4, 0, 0, 0, 0, 0, 0, 4, 4,
+        4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+    }
 
-	// if position.y > ScreenSize.y || position.y < ScreenSize.y/2 {
-	// 	return vec4(0, 0, 0, 0)
-	// }
-
-	// std := vec2(position.x / ScreenSize.x, (position.y/ScreenSize.y - 0.5)*2)
-    
-	// std := position.xy / ScreenSize.xy
-    // std.y = 1.0 - std.y
+    floorLevel := [100]float{
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+        2, 3, 3, 3, 3, 3, 3, 3, 3, 2,
+        2, 3, 3, 3, 3, 3, 3, 3, 3, 2,
+        2, 3, 3, 3, 3, 3, 3, 3, 3, 2,
+        2, 3, 3, 3, 3, 3, 3, 3, 3, 2,
+        2, 3, 3, 3, 3, 3, 3, 3, 3, 2,
+        2, 3, 3, 3, 3, 3, 3, 3, 3, 2,
+        2, 3, 3, 3, 3, 3, 3, 3, 3, 2,
+        2, 3, 3, 3, 3, 3, 3, 3, 3, 2,
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    }
 
     //calculate ray position and direction
-    cameraX := 2.0 * (1.0 - position.x / ScreenSize.x) - 1.0 //x-coordinate in camera space
+    cameraX := 2.0 * (1.0 - position.x / screenSize.x) - 1.0 //x-coordinate in camera space
 
 
     rayDir := Dir + Plane * cameraX
@@ -94,7 +99,7 @@ func Fragment(position vec4, texCoord vec2, color vec4) vec4 {
             side = 1.0
         }
 
-        mapIndex = GetWallMap(int(mapPos.x), int(mapPos.y))
+        mapIndex = level[10*int(mapPos.y)+int(mapPos.x)]
         if mapIndex >= 1 {
             // hit = 1
             break
@@ -120,7 +125,7 @@ func Fragment(position vec4, texCoord vec2, color vec4) vec4 {
         }
         
         if SpriteParam[i * 6 + 1] >= 0 && SpriteParam[i * 6 + 1] < squaredEuclidean && position.x > SpriteParam[i * 6 +2] && position.x < SpriteParam[i * 6 +2] + SpriteParam[i * 6 +4] && position.y > SpriteParam[i * 6 +3] && position.y < SpriteParam[i * 6 +3] + SpriteParam[i * 6 +5] {
-            texPos := vec2((position.x - SpriteParam[i * 6 +2]) / SpriteParam[i * 6 + 4] + mod(SpriteParam[i*6], ScreenSize.x / (TexSize)), (position.y - SpriteParam[i * 6 +3]) / SpriteParam[i * 6 +5]) * TexSize
+            texPos := vec2((position.x - SpriteParam[i * 6 +2]) / SpriteParam[i * 6 + 4] + mod(SpriteParam[i*6], screenSize.x / (texSize)), (position.y - SpriteParam[i * 6 +3]) / SpriteParam[i * 6 +5]) * texSize
         
             texOrigin, _ := imageSrcRegionOnTexture()
             //s はテクスチャ上のimageSrc上の座標　単位テクセル
@@ -133,32 +138,18 @@ func Fragment(position vec4, texCoord vec2, color vec4) vec4 {
     }
 
     wallX := fract(side * (Pos.x + perpWallDist*rayDir.x) + (1.0 - side) * (Pos.y + perpWallDist*rayDir.y))
-    // if side == 0 {
-    //     perpWallDist = sideDist.x - deltaDist.x
-    //     wallX = Pos.y + perpWallDist*rayDir.y //rayposY + perpwallDist * sin(angle)みたいなイメージ
-    // } else {
-    //     perpWallDist = sideDist.y - deltaDist.y
-    //     wallX = Pos.x + perpWallDist*rayDir.x //rayposX + perpwallDist * cos(angle)みたいなイメージ
-    // }
 
-    // wallX = fract(wallX) //整数部分をひく
-    // wallX -= floor(wallX)
-
-    // r.texX = int(wallX * float64(s.wld.texSize))
-
-    lineHeight := ScreenSize.y / perpWallDist
+    lineHeight := screenSize.y / perpWallDist
 
 
-    drawStart := -lineHeight / 2.0 + ScreenSize.y / 2.0
-    drawEnd := lineHeight / 2.0 + ScreenSize.y / 2.0
-
-    // brightnessLevel := 1/(1+perpWallDist/5)
+    drawStart := -lineHeight / 2.0 + screenSize.y / 2.0
+    drawEnd := lineHeight / 2.0 + screenSize.y / 2.0
 
 
     if position.y >= drawStart && position.y <= drawEnd {
-        texPos := vec2((wallX + mod(mapIndex-1, ScreenSize.x / TexSize)) * TexSize, (position.y - drawStart) / lineHeight * TexSize)
-        // texX := int(wallX * TexSize)
-        // texY := int((position.y - drawStart) / lineHeight * TexSize)
+        texPos := vec2((wallX + mod(mapIndex-1, screenSize.x / texSize)) * texSize, (position.y - drawStart) / lineHeight * texSize)
+        // texX := int(wallX * texSize)
+        // texY := int((position.y - drawStart) / lineHeight * texSize)
         texOrigin, _ := imageSrcRegionOnTexture()
         //s はテクスチャ上のimageSrc上の座標　単位テクセル
         //texOrigin + s/imageSrcTextureSize()はimageSrcがあるテクスチャのどの座標（単位ピクセル）のRGBAをとるか
@@ -185,46 +176,22 @@ func Fragment(position vec4, texCoord vec2, color vec4) vec4 {
         rayHitPos := vec2(mapPos.x + side * wallX + (1.0 - side) * (0.5 - 0.5 * sign(rayDir.x)), mapPos.y + (1.0-side) * wallX + side*((0.5 - 0.5 * sign(rayDir.y))))
         // rayHitPos := vec2(mapPos.x + mix(1-step(rayDir.x, 0.0), wallX, side), mapPos.y + mix(wallX, 1 - step(rayDir.y, 0.0), side))
 
-/*
-    if side == 0 && rayDir.x > 0 { // rayが壁の左にヒット
-        rayHitPos.x = mapPos.x
-        rayHitPos.y = mapPos.y + wallX
-    } else if side == 0 && rayDir.x < 0 { // rayが壁の右にヒット
-        rayHitPos.x = mapPos.x + 1.0
-        rayHitPos.y = mapPos.y + wallX
-    } else if side == 1 && rayDir.y > 0 { //rayが壁の上にヒット
-        rayHitPos.x = mapPos.x + wallX
-        rayHitPos.y = mapPos.y
-    } else if side == 1 && rayDir.y < 0 { // rayが壁の下にヒット
-        rayHitPos.x = mapPos.x + wallX
-        rayHitPos.y = mapPos.y + 1.0
-    }
-*/
 
         distToIntersectionWithBottomOfWall := perpWallDist
         distPlayer := 0.0
-        distToIntersectionWithFloor := ScreenSize.y / (2.0*position.y - ScreenSize.y) //この代わりに小さなルックアップ テーブルを作成できます
+        distToIntersectionWithFloor := screenSize.y / (2.0*position.y - screenSize.y) //この代わりに小さなルックアップ テーブルを作成できます
         weight := (distToIntersectionWithFloor - distPlayer) / (distToIntersectionWithBottomOfWall - distPlayer)//0-1
 
         currentFloor := vec2(weight*rayHitPos.x+(1.0-weight)*Pos.x, weight*rayHitPos.y+(1.0-weight)*Pos.y) //平面図において線形補完
-        floorMapIndex := GetFloorMap(int(currentFloor.x), int(currentFloor.y)) - 1.0
-        // texPos := vec2((fract(currentFloor.x)) * TexSize, (fract(currentFloor.y)) * TexSize)
+        floorMapIndex := floorLevel[10*int(currentFloor.y)+int(currentFloor.x)] - 1.0
+        // floorMapIndex := GetFloorMap(int(currentFloor.x), int(currentFloor.y)) - 1.0
+
+        // texPos := vec2((fract(currentFloor.x)) * texSize, (fract(currentFloor.y)) * texSize)
         // if (fract(currentFloor.x)) <= 0.003 {
         //     currentFloor.x += 0.003
         // }
-        texPos := vec2((fract(currentFloor.x) + mod(floorMapIndex, ScreenSize.x / TexSize)) * TexSize, (fract(currentFloor.y)) * TexSize) //テクスチャが多いときの折り返し未実装
+        texPos := vec2((fract(currentFloor.x) + mod(floorMapIndex, screenSize.x / texSize)) * texSize, (fract(currentFloor.y)) * texSize) //テクスチャが多いときの折り返し未実装
 
-
-        // texPos := (fract(currentFloor) + floorMapIndex) * TexSize
-
-
-        
-
-        // texPos := currentFloor / WorldSize * TexSize
-        
-        // if texPos.x > 0.5 {
-        //     return vec4(0, 1, 0, 1)
-        // }
 
         texOrigin, _ := imageSrcRegionOnTexture()
         //s はテクスチャ上のimageSrc上の座標　単位テクセル
@@ -236,14 +203,14 @@ func Fragment(position vec4, texCoord vec2, color vec4) vec4 {
         distToIntersectionWithTopOfWall := perpWallDist
         distPlayer := 0.0
         // println(int(r.renderPos.Y+r.lineHeight) + 1)
-        distToIntersectionWithCeiling := ScreenSize.y / (2.0*position.y - ScreenSize.y) //この代わりに小さなルックアップ テーブルを作成できます
+        distToIntersectionWithCeiling := screenSize.y / (2.0*position.y - screenSize.y) //この代わりに小さなルックアップ テーブルを作成できます
         weight := -(distToIntersectionWithCeiling - distPlayer) / (distToIntersectionWithTopOfWall - distPlayer)//0-1
 
         currentCeiling := vec2(weight*rayHitPos.x+(1.0-weight)*Pos.x, weight*rayHitPos.y+(1.0-weight)*Pos.y) //平面図において線形補完
 
-        texPos := fract(currentCeiling) * TexSize
+        texPos := fract(currentCeiling) * texSize
 
-        // texPos := currentFloor / WorldSize * TexSize
+        // texPos := currentFloor / WorldSize * texSize
         
         // if texPos.x > 0.5 {
         //     return vec4(0, 1, 0, 1)

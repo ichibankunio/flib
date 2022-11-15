@@ -61,3 +61,23 @@ func (v Vec2) Scale(s float64) Vec2 {
 func (v Vec2) Mul(other Vec2) Vec2 {
 	return New(v.X * other.X, v.Y * other.Y)
 }
+
+func (v Vec2) Floor() Vec2 {
+	return New(math.Floor(v.X), math.Floor(v.Y))
+}
+
+func (v Vec2) Abs() Vec2 {
+	return New(math.Abs(v.X), math.Abs(v.Y))
+}
+
+func (v Vec2) Sign() Vec2 {
+	sign := New(1, 1)
+	if v.X < 0 {
+		sign.X = -1
+	}
+	if v.Y < 0 {
+		sign.Y = -1
+	}
+
+	return sign
+}

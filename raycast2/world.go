@@ -48,7 +48,7 @@ func (w *World) Init(screenWidth, screenHeight float64) {
 	// 	{128, 128},
 	// }
 
-	w.SpriteRenderParam = make([]float32, 18)
+	w.SpriteRenderParam = make([]float32, 60)
 	for i := range w.SpriteRenderParam {
 		if i%6 == 0 {
 			w.SpriteRenderParam[i] = -1
@@ -60,7 +60,7 @@ func (w *World) Init(screenWidth, screenHeight float64) {
 }
 
 func (w *World) NewSprite(pos vec2.Vec2, texID int) {
-	if len(w.Sprites) < 3 {
+	if len(w.Sprites) < 10 {
 		w.Sprites = append(w.Sprites, &Sprite{
 			Pos:   pos,
 			ID:    len(w.Sprites),
