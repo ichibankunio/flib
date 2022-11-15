@@ -361,7 +361,6 @@ func (r *Renderer) updateCamera() {
 		r.Cam.pos = r.Cam.pos.Add(r.collisionCheckedDelta(r.Cam.plane.Scale(r.Cam.v)))
 
 	}
-
 }
 
 func (r *Renderer) collisionCheckedDelta(delta vec2.Vec2) vec2.Vec2 {
