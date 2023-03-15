@@ -23,11 +23,11 @@ func GetJustReleasedTouchIDs() []ebiten.TouchID {
 }
 
 func IsThereJustReleasedTouch(pos vec2.Vec2, size vec2.Vec2) bool {
-	for i := 0; i < len(justReleasedTouchIDs); i++ {
-		x, y := inpututil.TouchPositionInPreviousTick(justReleasedTouchIDs[i])
+	for i := 0; i < len(inpututil.AppendJustReleasedTouchIDs(nil)); i++ {
+		x, y := inpututil.TouchPositionInPreviousTick(inpututil.AppendJustReleasedTouchIDs(nil)[i])
 		if x > int(pos.X) && x < int(pos.X + size.X) && y > int(pos.Y) && y < int(pos.Y + size.Y) {
 			return true
-			
+
 		}
 	}
 	
