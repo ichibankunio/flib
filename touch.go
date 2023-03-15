@@ -3,6 +3,7 @@ package flib
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/ichibankunio/flib/vec2"
 )
 
 var justPressedTouchIDs []ebiten.TouchID
@@ -21,10 +22,10 @@ func GetJustReleasedTouchIDs() []ebiten.TouchID {
 	return justReleasedTouchIDs
 }
 
-func IsThereJustReleasedTouch(x0, y0, x1, y1 int) bool {
+func IsThereJustReleasedTouch(pos vec2.Vec2, size vec2.Vec2) bool {
 	for i := 0; i < len(justReleasedTouchIDs); i++ {
 		x, y := inpututil.TouchPositionInPreviousTick(justReleasedTouchIDs[i])
-		if x > x0 && x < x1 && y > y0 && y < y1 {
+		if x > int(pos.X) && x < int(pos.X + size.X) && y > int(pos.Y) && y < int(pos.Y + size.Y) {
 			return true
 		}
 	}
