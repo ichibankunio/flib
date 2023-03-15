@@ -27,6 +27,7 @@ func IsThereJustReleasedTouch(pos vec2.Vec2, size vec2.Vec2) bool {
 		x, y := inpututil.TouchPositionInPreviousTick(justReleasedTouchIDs[i])
 		if x > int(pos.X) && x < int(pos.X + size.X) && y > int(pos.Y) && y < int(pos.Y + size.Y) {
 			return true
+			
 		}
 	}
 	
