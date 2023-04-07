@@ -3,7 +3,7 @@ package flib
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"github.com/ichibankunio/flib/vec2"
+	"github.com/ichibankunio/fvec/vec2"
 )
 
 type Sprite struct {
@@ -89,7 +89,7 @@ func (s *Sprite) checkIsTouchJustReleased() {
 			s.isJustReleased = true
 			return
 		}
-		
+
 		s.isJustReleased = true
 		s.isStillTouched = false
 		return
@@ -118,30 +118,30 @@ func (s *Sprite) checkIsTouchJustReleased() {
 
 func (s *Sprite) IsTouchJustReleased() (isJustReleased bool, isStillTouched bool) {
 	/*
-	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
-		x, y := ebiten.CursorPosition()
+		if inpututil.IsMouseButtonJustReleased(ebiten.MouseButtonLeft) {
+			x, y := ebiten.CursorPosition()
 
-		if x >= int(s.Pos.X) && x <= int(s.Pos.X)+s.Img.Bounds().Dx() && y >= int(s.Pos.Y) && y <= int(s.Pos.Y)+s.Img.Bounds().Dy() {
-			return true, true
-		}
-		
-		return true, false
+			if x >= int(s.Pos.X) && x <= int(s.Pos.X)+s.Img.Bounds().Dx() && y >= int(s.Pos.Y) && y <= int(s.Pos.Y)+s.Img.Bounds().Dy() {
+				return true, true
+			}
 
-	}
+			return true, false
 
-	// if s.JustPressedTouchID != 5000 {
-	if inpututil.IsTouchJustReleased(s.JustPressedTouchID) {
-		s.JustPressedTouchID = 5000
-
-		x, y := s.lastFrameTouchX, s.lastFrameTouchY
-		if x >= int(s.Pos.X) && x <= int(s.Pos.X)+s.Img.Bounds().Dx() && y >= int(s.Pos.Y) && y <= int(s.Pos.Y)+s.Img.Bounds().Dy() {
-			return true, true
 		}
 
-		return true, false
-	}
+		// if s.JustPressedTouchID != 5000 {
+		if inpututil.IsTouchJustReleased(s.JustPressedTouchID) {
+			s.JustPressedTouchID = 5000
 
-	return false, false
+			x, y := s.lastFrameTouchX, s.lastFrameTouchY
+			if x >= int(s.Pos.X) && x <= int(s.Pos.X)+s.Img.Bounds().Dx() && y >= int(s.Pos.Y) && y <= int(s.Pos.Y)+s.Img.Bounds().Dy() {
+				return true, true
+			}
+
+			return true, false
+		}
+
+		return false, false
 	*/
 
 	return s.isJustReleased, s.isStillTouched
@@ -187,7 +187,7 @@ func (s *Sprite) Update() {
 			if x >= int(s.Pos.X) && x <= int(s.Pos.X)+s.Img.Bounds().Dx() && y >= int(s.Pos.Y) && y <= int(s.Pos.Y)+s.Img.Bounds().Dy() {
 				s.JustPressedTouchID = t
 				// break
-			} 
+			}
 			// else {
 			// 	s.JustPressedTouchID = 5000
 			// }

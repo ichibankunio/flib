@@ -3,7 +3,7 @@ package flib
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"github.com/ichibankunio/flib/vec2"
+	"github.com/ichibankunio/fvec/vec2"
 )
 
 var justPressedTouchIDs []ebiten.TouchID

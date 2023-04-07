@@ -5,7 +5,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/ichibankunio/flib"
-	"github.com/ichibankunio/flib/vec2"
+	"github.com/ichibankunio/fvec/vec2"
 	"golang.org/x/image/font"
 )
 
