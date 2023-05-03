@@ -1,11 +1,14 @@
 module github.com/ichibankunio/flib
 
-go 1.18
+go 1.20
+
+replace github.com/ichibankunio/fvec => /Users/ku201/GoWorks/src/github.com/ichibankunio/fvec
 
 require (
 	github.com/fogleman/gg v1.3.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/hajimehoshi/ebiten/v2 v2.4.0
+	github.com/ichibankunio/fvec v0.0.0-20230331140033-0cb4fa981921
 	golang.org/x/image v0.0.0-20220722155232-062f8c9fd539
 )
 
