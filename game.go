@@ -56,9 +56,15 @@ func (g *Game) Update() error {
 	}
 
 	justPressedTouchIDs = inpututil.AppendJustPressedTouchIDs(justPressedTouchIDs[:0])
-	x, y := ebiten.TouchPosition(justPressedTouchIDs[0])
-	g.justPressedTouchBeganPosX = x
-	g.justPressedTouchBeganPosY = y
+	if len(justPressedTouchIDs) > 0 {
+		x, y := ebiten.TouchPosition(justPressedTouchIDs[0])
+		g.justPressedTouchBeganPosX = x
+		g.justPressedTouchBeganPosY = y
+	}else {
+		g.justPressedTouchBeganPosX = -1
+		g.justPressedTouchBeganPosY = -1
+	}
+
 
 	// touchIDs = inpututil.AppendJustPressedTouchIDs(touchIDs[:0])
 	touchIDs = ebiten.AppendTouchIDs(touchIDs[:0])
