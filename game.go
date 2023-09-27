@@ -27,7 +27,8 @@ type Game struct {
 	IsSceneTransition  bool
 	transitionTick     *TickF
 	transitionDuration int
-	justPressedTouchBeganPos vec2.Vec2
+	justPressedTouchBeganPosX int
+	justPressedTouchBeganPosY int
 }
 
 type LangID int
@@ -38,6 +39,14 @@ const (
 )
 
 type SceneID int
+
+func (g *Game) GetJustPressedTouchBeganPosX() int {
+	return g.justPressedTouchBeganPosX
+}
+
+func (g *Game) GetJustPressedTouchBeganPosY() int {
+	return g.justPressedTouchBeganPosY
+}
 
 func (g *Game) Update() error {
 	justReleasedTouchIDs = justReleasedTouchIDs[:0]
@@ -51,7 +60,7 @@ func (g *Game) Update() error {
 	x, y := ebiten.TouchPosition(justPressedTouchIDs[0])
 	g.justPressedTouchBeganPos.X = float64(x)
 	g.justPressedTouchBeganPos.Y = float64(y)
-	
+
 	// touchIDs = inpututil.AppendJustPressedTouchIDs(touchIDs[:0])
 	touchIDs = ebiten.AppendTouchIDs(touchIDs[:0])
 
