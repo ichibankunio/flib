@@ -60,9 +60,11 @@ func (g *Game) Update() error {
 		x, y := ebiten.TouchPosition(justPressedTouchIDs[0])
 		g.justPressedTouchBeganPosX = x
 		g.justPressedTouchBeganPosY = y
-	}else {
-		g.justPressedTouchBeganPosX = -1
-		g.justPressedTouchBeganPosY = -1
+	}
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		x, y := ebiten.CursorPosition()
+		g.justPressedTouchBeganPosX = x
+		g.justPressedTouchBeganPosY = y
 	}
 
 
