@@ -28,6 +28,7 @@ type Game struct {
 	transitionDuration        int
 	justPressedTouchBeganPosX int
 	justPressedTouchBeganPosY int
+	isTouchBeganEventTriggered bool
 }
 
 type LangID int
@@ -47,6 +48,10 @@ func (g *Game) GetJustPressedTouchBeganPosY() int {
 	return g.justPressedTouchBeganPosY
 }
 
+func (g *Game) IsTouchBeganEventTriggered() bool {
+	return g.isTouchBeganEventTriggered
+}
+
 func (g *Game) Update() error {
 	justReleasedTouchIDs = justReleasedTouchIDs[:0]
 	for _, id := range touchIDs {
@@ -60,11 +65,14 @@ func (g *Game) Update() error {
 		x, y := ebiten.TouchPosition(justPressedTouchIDs[0])
 		g.justPressedTouchBeganPosX = x
 		g.justPressedTouchBeganPosY = y
-	}
-	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		g.isTouchBeganEventTriggered = true
+	}else if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
 		g.justPressedTouchBeganPosX = x
 		g.justPressedTouchBeganPosY = y
+		g.isTouchBeganEventTriggered = true
+	}else {
+		g.isTouchBeganEventTriggered = false
 	}
 
 
