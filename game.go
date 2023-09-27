@@ -8,6 +8,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/ichibankunio/flib/storage"
+	"github.com/ichibankunio/fvec/vec2"
 )
 
 type Game struct {
@@ -26,6 +27,7 @@ type Game struct {
 	IsSceneTransition  bool
 	transitionTick     *TickF
 	transitionDuration int
+	justPressedTouchBeganPos vec2.Vec2
 }
 
 type LangID int
@@ -46,7 +48,10 @@ func (g *Game) Update() error {
 	}
 
 	justPressedTouchIDs = inpututil.AppendJustPressedTouchIDs(justPressedTouchIDs[:0])
-
+	x, y := ebiten.TouchPosition(justPressedTouchIDs[0])
+	g.justPressedTouchBeganPos.X = float64(x)
+	g.justPressedTouchBeganPos.Y = float64(y)
+	
 	// touchIDs = inpututil.AppendJustPressedTouchIDs(touchIDs[:0])
 	touchIDs = ebiten.AppendTouchIDs(touchIDs[:0])
 

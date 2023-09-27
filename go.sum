@@ -10,8 +10,8 @@ github.com/hajimehoshi/bitmapfont/v2 v2.2.3 h1:jmq/TMNj352V062Tr5e3hAoipkoxCbY1J
 github.com/hajimehoshi/bitmapfont/v2 v2.2.3/go.mod h1:sWM8ejdkGSXaQGlZcegMRx4DyEPOWYyXqsBKIs+Yhzk=
 github.com/hajimehoshi/bitmapfont/v3 v3.0.0 h1:r2+6gYK38nfztS/et50gHAswb9hXgxXECYgE8Nczmi4=
 github.com/hajimehoshi/bitmapfont/v3 v3.0.0/go.mod h1:+CxxG+uMmgU4mI2poq944i3uZ6UYFfAkj9V6WqmuvZA=
-github.com/hajimehoshi/ebiten/v2 v2.7.0-alpha.1.0.20230922150115-8fe3a0ef9b4b h1:SO2THM807J4ixXNtgQnTQD4rukmszV63C6G8enfOWOg=
-github.com/hajimehoshi/ebiten/v2 v2.7.0-alpha.1.0.20230922150115-8fe3a0ef9b4b/go.mod h1:k7JEgv6rG4wBaFfETWISYOFEL6gN6AxdlFQGoSKmKBc=
+github.com/hajimehoshi/ebiten/v2 v2.6.0 h1:nh09FUhjNGFVcUUPsx6oTMbD1pHerNvTKPE+494y3cU=
+github.com/hajimehoshi/ebiten/v2 v2.6.0/go.mod h1:TZtorL713an00UW4LyvMeKD8uXWnuIuCPtlH11b0pgI=
 github.com/hajimehoshi/go-mp3 v0.3.4 h1:NUP7pBYH8OguP4diaTZ9wJbUbk3tC0KlfzsEpWmYj68=
 github.com/hajimehoshi/go-mp3 v0.3.4/go.mod h1:fRtZraRFcWb0pu7ok0LqyFhCUrPeMsGRSVop0eemFmo=
 github.com/hajimehoshi/oto/v2 v2.3.1/go.mod h1:seWLbgHH7AyUMYKfKYT9pg7PhUu9/SisyJvNTT+ASQo=

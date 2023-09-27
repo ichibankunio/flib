@@ -6,7 +6,7 @@ require (
 	github.com/fogleman/gg v1.3.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/hajimehoshi/bitmapfont/v2 v2.2.3
-	github.com/hajimehoshi/ebiten/v2 v2.7.0-alpha.1.0.20230922150115-8fe3a0ef9b4b
+	github.com/hajimehoshi/ebiten/v2 v2.6.0
 	github.com/ichibankunio/fvec v0.2.0
 	golang.org/x/image v0.12.0
 )
