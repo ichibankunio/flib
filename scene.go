@@ -45,9 +45,9 @@ func ShiftSceneWithFadeInOut(g *Game, shiftTo SceneID, duration int) {
 	g.IsSceneTransition = true
 	g.transitionDuration = duration
 	g.transitionTick = NewTickF(1, false, -1, func(cc int, i []interface{}) bool {
-		println(cc)
 		if cc == duration/2 {
 			g.Scenes[shiftTo].Start(g)
+			// println(cc)
 			g.State = shiftTo
 
 		} else if cc == duration {
