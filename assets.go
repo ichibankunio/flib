@@ -52,14 +52,25 @@ func init() {
 func NewImageFromBytes(byteData []byte) *ebiten.Image {
 	r := bytes.NewReader(byteData)
 
-	_, format, _ := image.DecodeConfig(r)
-	var img image.Image
-	if format == "png" {
-		img, _ = png.Decode(r)
-	} else if format == "jpg" {
-		img, _ = jpeg.Decode(r)
+	_, format, err := image.DecodeConfig(r)
+	if err != nil {
+		panic(err)
 	}
 
+	r = bytes.NewReader(byteData)
+
+	var img image.Image
+	if format == "png" {
+		img, err = png.Decode(r)
+		if err != nil {
+			panic(err)
+		}
+	} else if format == "jpg" {
+		img, err = jpeg.Decode(r)
+		if err != nil {
+			panic(err)
+		}
+	}
 	return ebiten.NewImageFromImage(img)
 }
 
