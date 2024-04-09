@@ -65,7 +65,7 @@ func NewImageFromBytes(byteData []byte) *ebiten.Image {
 		if err != nil {
 			panic(err)
 		}
-	} else if format == "jpg" {
+	} else if format == "jpeg" {
 		img, err = jpeg.Decode(r)
 		if err != nil {
 			panic(err)
