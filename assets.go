@@ -3,6 +3,8 @@ package flib
 import (
 	"bytes"
 	"embed"
+	"image"
+	"image/jpeg"
 	"image/png"
 	"log"
 
@@ -49,8 +51,16 @@ func init() {
 
 func NewImageFromBytes(byteData []byte) *ebiten.Image {
 	r := bytes.NewReader(byteData)
-	p, _ := png.Decode(r)
-	return ebiten.NewImageFromImage(p)
+
+	_, format, _ := image.DecodeConfig(r)
+	var img image.Image
+	if format == "png" {
+		img, _ = png.Decode(r)
+	} else if format == "jpg" {
+		img, _ = jpeg.Decode(r)
+	}
+
+	return ebiten.NewImageFromImage(img)
 }
 
 func NewFontFromBytes(byteData []byte, size int) font.Face {
