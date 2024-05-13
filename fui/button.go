@@ -141,7 +141,7 @@ func (b *Button) Draw(screen *ebiten.Image) {
 	w, h := b.Spr.Img.Bounds().Dx(), b.Spr.Img.Bounds().Dy()
 	op.GeoM.Translate(b.Spr.Pos.X+float64(w)/2, b.Spr.Pos.Y+float64(h)/2)
 	op.ColorScale.ScaleWithColor(b.txtColor)
-	op.LineSpacing = b.fontFace.Metrics().VAscent + b.fontFace.Metrics().VLineGap
+	op.LineSpacing = b.fontFace.Metrics().HAscent * 1.2
 	text.Draw(screen, b.Txt, b.fontFace, op)
 }
 
