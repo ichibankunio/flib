@@ -42,7 +42,7 @@ func NewVolumeSlider(centerX, y int, width int, target SoundType, fontFace font.
 		s.handle.Spr.Pos.X = s.bar.Pos.X + flib.GetSEVolume() * float64(width - s.handle.Spr.Img.Bounds().Dx())
 	}
 
-	s.handle.Txt.SetCenter(int(s.handle.Spr.Pos.X) + s.handle.Spr.Img.Bounds().Dx() / 2)
+	// s.handle.Txt.SetCenter(int(s.handle.Spr.Pos.X) + s.handle.Spr.Img.Bounds().Dx() / 2)
 
 
 	return s
@@ -93,7 +93,7 @@ func (s *Slider) Update(g *flib.Game) {
 		if s.handle.Spr.Pos.X > s.bar.Pos.X + float64(s.bar.Img.Bounds().Dx()) - float64(s.handle.Spr.Img.Bounds().Dx()) { 
 			s.handle.Spr.Pos.X = s.bar.Pos.X + float64(s.bar.Img.Bounds().Dx()) - float64(s.handle.Spr.Img.Bounds().Dx())
 		}
-		s.handle.Txt.SetCenter(int(s.handle.Spr.Pos.X) + s.handle.Spr.Img.Bounds().Dx() / 2)
+		// s.handle.Txt.SetCenter(int(s.handle.Spr.Pos.X) + s.handle.Spr.Img.Bounds().Dx() / 2)
 
 		scale := (s.handle.Spr.Pos.X - s.bar.Pos.X) / float64(s.bar.Img.Bounds().Dx() - s.handle.Spr.Img.Bounds().Dx())
 		switch s.target {

@@ -6,7 +6,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 
-	"github.com/hajimehoshi/ebiten/v2/text"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/ichibankunio/flib"
 	"github.com/ichibankunio/fvec/vec2"
@@ -26,7 +26,9 @@ const (
 
 type Button struct {
 	Spr *flib.Sprite
-	Txt *flib.Text
+	// Txt *flib.Text
+	Txt string
+	fontFace text.Face
 	OnClick func(*flib.Game)
 	OnRelease func(*flib.Game)
 	IsClickInProgress bool
@@ -35,25 +37,30 @@ type Button struct {
 	
 }
 
-func NewButton(txt string, centerX int, y int, width int, height int, fontface font.Face, theme UITheme, txtClr, clrBound, clrBg color.Color) *Button {
+func NewButton(txt string, centerX int, y int, width int, height int, font font.Face, theme UITheme, txtClr, clrBound, clrBg color.Color) *Button {
 	return &Button{
 		Spr: flib.NewSprite(NewButtonImg(width, height, theme, clrBound, clrBg), vec2.New(float64(centerX - width / 2), float64(y))),
-		Txt: flib.NewText(txt, vec2.New(float64(centerX - text.BoundString(fontface, txt).Dx()/2), float64(y + height / 2 - text.BoundString(fontface, txt).Dy()/2)), txtClr, fontface),
+		Txt: txt,
+		// Txt: flib.NewText(txt, vec2.New(float64(centerX - text.BoundString(fontface, txt).Dx()/2), float64(y + height / 2 - text.BoundString(fontface, txt).Dy()/2)), txtClr, fontface),
 		OnClick: func(*flib.Game){},
 		OnRelease: func(*flib.Game){},
 		IsClickInProgress: false,
+		fontFace: text.NewGoXFace(font),
 	}
 }
 
 func (b *Button) Translate(x, y float64) {
 	b.Spr.Pos = vec2.New(x, y)
 
-	b.Txt.SetCenter(int(x) + b.Spr.Img.Bounds().Dx() / 2)
+	// b.Txt.SetCenter(int(x) + b.Spr.Img.Bounds().Dx() / 2)
 }
 
 func (b *Button) Draw(screen *ebiten.Image) {
 	b.Spr.Draw(screen)
-	b.Txt.Draw(screen)
+	// b.Txt.Draw(screen)
+	op := &text.DrawOptions{}
+	op.PrimaryAlign = text.AlignCenter
+	text.Draw(screen, b.Txt, b.fontFace, op)
 }
 
 func (b *Button) Update(g *flib.Game) {
