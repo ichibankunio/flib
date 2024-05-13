@@ -60,6 +60,7 @@ func (b *Button) Draw(screen *ebiten.Image) {
 	// b.Txt.Draw(screen)
 	op := &text.DrawOptions{}
 	op.PrimaryAlign = text.AlignCenter
+	op.SecondaryAlign = text.AlignCenter
 	text.Draw(screen, b.Txt, b.fontFace, op)
 }
 
