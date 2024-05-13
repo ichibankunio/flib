@@ -135,12 +135,12 @@ func (b *Button) Draw(screen *ebiten.Image) {
 	b.Spr.Draw(screen)
 	op := &text.DrawOptions{}
 	op.PrimaryAlign = text.AlignCenter
-	// op.SecondaryAlign = text.AlignCenter
+	op.SecondaryAlign = text.AlignCenter
 
 	w, h := b.Spr.Img.Bounds().Dx(), b.Spr.Img.Bounds().Dy()
 	op.GeoM.Translate(b.Spr.Pos.X+float64(w)/2, b.Spr.Pos.Y+float64(h)/2)
 	op.ColorScale.ScaleWithColor(b.txtColor)
-	op.LineSpacing = b.fontFace.Metrics().HLineGap
+	op.LineSpacing = b.fontFace.Metrics().VAscent + b.fontFace.Metrics().VLineGap
 	text.Draw(screen, b.Txt, b.fontFace, op)
 }
 
