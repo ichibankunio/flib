@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image/color"
 	"math"
+	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
 
@@ -101,6 +102,7 @@ func NewButton(txt string, pos vec2.Vec2, size vec2.Vec2, face font.Face, theme 
 		// Txt:               flib.NewText(txt, vec2.New(float64(int(pos.X+size.X/2)-text.BoundString(fontface, txt).Dx()/2), float64(int(pos.Y+size.Y/2)-text.BoundString(fontface, txt).Dy()/2)), txtClr, fontface),
 		Txt:               txt,
 		fontFace:          text.NewGoXFace(face),
+
 		txtColor:          txtClr,
 		OnClick:           func(*flib.Game) {},
 		OnRelease:         func(*flib.Game) {},
