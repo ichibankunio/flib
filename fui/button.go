@@ -31,6 +31,7 @@ type Button struct {
 	Spr               *flib.Sprite
 	Txt               string
 	fontFace          text.Face
+	txtColor          color.Color
 	OnClick           func(*flib.Game)
 	OnRelease         func(*flib.Game)
 	IsClickInProgress bool
@@ -100,6 +101,7 @@ func NewButton(txt string, pos vec2.Vec2, size vec2.Vec2, face font.Face, theme 
 		// Txt:               flib.NewText(txt, vec2.New(float64(int(pos.X+size.X/2)-text.BoundString(fontface, txt).Dx()/2), float64(int(pos.Y+size.Y/2)-text.BoundString(fontface, txt).Dy()/2)), txtClr, fontface),
 		Txt:               txt,
 		fontFace:          text.NewGoXFace(face),
+		txtColor:          txtClr,
 		OnClick:           func(*flib.Game) {},
 		OnRelease:         func(*flib.Game) {},
 		IsClickInProgress: false,
@@ -137,6 +139,7 @@ func (b *Button) Draw(screen *ebiten.Image) {
 
 	w, h := b.Spr.Img.Bounds().Dx(), b.Spr.Img.Bounds().Dy()
 	op.GeoM.Translate(b.Spr.Pos.X+float64(w)/2, b.Spr.Pos.Y+float64(h)/2)
+	op.ColorScale.ScaleWithColor(b.txtColor)
 	text.Draw(screen, b.Txt, b.fontFace, op)
 }
 
