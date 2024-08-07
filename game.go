@@ -41,6 +41,10 @@ const (
 
 type SceneID int
 
+func (g *Game) GetCurrentSceneInstance() *Scene {
+	return &g.Scenes[g.State]
+}
+
 func (g *Game) GetJustPressedTouchBeganPosX() int {
 	return g.justPressedTouchBeganPosX
 }
@@ -63,15 +67,14 @@ func (g *Game) Update() error {
 		g.justPressedTouchBeganPosX = x
 		g.justPressedTouchBeganPosY = y
 		g.IsTouchBeganEventTriggerReady = true
-	}else if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+	} else if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		x, y := ebiten.CursorPosition()
 		g.justPressedTouchBeganPosX = x
 		g.justPressedTouchBeganPosY = y
 		g.IsTouchBeganEventTriggerReady = true
-	}else {
+	} else {
 		g.IsTouchBeganEventTriggerReady = false
 	}
-
 
 	// touchIDs = inpututil.AppendJustPressedTouchIDs(touchIDs[:0])
 	touchIDs = ebiten.AppendTouchIDs(touchIDs[:0])
