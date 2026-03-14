@@ -37,6 +37,7 @@ type LangID int
 const (
 	LANG_JA LangID = iota
 	LANG_EN
+	LANG_KR
 )
 
 type SceneID int
